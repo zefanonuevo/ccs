@@ -3,139 +3,943 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>CCS Dashboard</title>
+<title>DLSU CCS Faculty Publications</title>
 <style>
   :root {
-    --bg: #f5f6f8;
-    --surface: #ffffff;
-    --text: #1a1d23;
-    --text-dim: #5b616e;
-    --border: #e2e5ea;
-    --accent: #2f6feb;
+    --surface-1: #fcfcfb;
+    --page: #f9f9f7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --gridline: #e1e0d9;
+    --baseline: #c3c2b7;
+    --border: rgba(11,11,11,0.10);
+
+    --series-1: #2a78d6; /* blue */
+    --series-2: #1baf7a; /* aqua */
+    --series-3: #eda100; /* yellow */
+    --series-4: #008300; /* green */
+    --series-5: #4a3aa7; /* violet */
+    --series-6: #e34948; /* red */
+    --series-7: #e87ba4; /* magenta */
+    --series-8: #eb6834; /* orange */
+
+    --good: #0ca30c;
+    --warning: #fab219;
+    --serious: #ec835a;
+    --critical: #d03b3b;
+
+    --brand: #0f3d2e;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #0f1115;
-      --surface: #171a21;
-      --text: #eaecef;
-      --text-dim: #9aa1ac;
-      --border: #2a2e37;
-      --accent: #6ea8ff;
+      --surface-1: #1a1a19;
+      --page: #0d0d0d;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #898781;
+      --gridline: #2c2c2a;
+      --baseline: #383835;
+      --border: rgba(255,255,255,0.10);
+
+      --series-1: #3987e5;
+      --series-2: #199e70;
+      --series-3: #c98500;
+      --series-4: #008300;
+      --series-5: #9085e9;
+      --series-6: #e66767;
+      --series-7: #d55181;
+      --series-8: #d95926;
+
+      --good: #0ca30c;
+      --warning: #fab219;
+      --serious: #ec835a;
+      --critical: #d03b3b;
+
+      --brand: #1c5c46;
     }
   }
   * { box-sizing: border-box; }
   html, body {
     margin: 0;
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--page);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
-  body {
-    display: flex;
-    flex-direction: column;
-  }
+  h1, h2, h3, p { margin: 0; }
+  .tabular { font-variant-numeric: tabular-nums; }
+
   header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
     padding: 1rem 1.5rem;
-    background: var(--surface);
+    background: var(--surface-1);
     border-bottom: 1px solid var(--border);
     flex-wrap: wrap;
   }
-  .title-block h1 {
-    margin: 0;
-    font-size: 1.15rem;
-    font-weight: 600;
+  .brand { display: flex; gap: 0.75rem; align-items: flex-start; }
+  .brand-icon {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    flex: none;
   }
-  .title-block p {
-    margin: 0.15rem 0 0;
-    font-size: 0.85rem;
-    color: var(--text-dim);
-  }
-  .actions {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-  }
-  .actions a, .actions button {
-    font: inherit;
-    font-size: 0.85rem;
-    padding: 0.5rem 0.9rem;
-    border-radius: 6px;
+  .brand-icon svg { width: 20px; height: 20px; }
+  .brand h1 { font-size: 1.1rem; font-weight: 700; }
+  .brand p { font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.15rem; }
+  .status-line { font-size: 0.75rem; margin-top: 0.3rem; display: flex; align-items: center; gap: 0.35rem; }
+  .status-line.warn { color: var(--critical); }
+  .status-line.ok { color: var(--text-muted); }
+
+  #theme-toggle {
+    width: 36px; height: 36px; border-radius: 50%;
     border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    text-decoration: none;
-    cursor: pointer;
+    background: var(--surface-1); color: var(--text-primary);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    flex: none;
   }
-  .actions .primary {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-  }
-  main {
-    flex: 1;
-    padding: 1rem 1.5rem 1.5rem;
-    display: flex;
-  }
-  .sheet-frame {
-    flex: 1;
-    width: 100%;
-    border: 1px solid var(--border);
+  #theme-toggle svg { width: 16px; height: 16px; }
+
+  main { padding: 1.25rem 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
+
+  .banner {
+    display: none;
+    border: 1px solid var(--critical);
+    background: color-mix(in srgb, var(--critical) 10%, var(--surface-1));
     border-radius: 10px;
-    overflow: hidden;
-    background: var(--surface);
-    min-height: 0;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 1.1rem;
   }
-  iframe {
+  .banner.show { display: block; }
+  .banner-title { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: var(--critical); font-size: 0.92rem; }
+  .banner-title svg { width: 18px; height: 18px; flex: none; }
+  .banner p { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.3rem; }
+  .banner code { font-size: 0.74rem; background: var(--page); padding: 0.1rem 0.35rem; border-radius: 4px; word-break: break-all; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 0.9rem;
+    margin-bottom: 1.1rem;
+  }
+  .stat-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .stat-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 600; }
+  .stat-value { font-size: 1.7rem; font-weight: 700; margin-top: 0.3rem; }
+  .stat-sub { font-size: 0.76rem; color: var(--text-secondary); margin-top: 0.2rem; }
+  .stat-icon {
+    width: 36px; height: 36px; border-radius: 9px; flex: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .stat-icon svg { width: 17px; height: 17px; }
+
+  .filter-bar {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    display: grid;
+    grid-template-columns: minmax(180px, 2fr) repeat(5, minmax(120px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.1rem;
+  }
+  .filter-field label { display: block; font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.3rem; }
+  .filter-field input, .filter-field select {
     width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
+    font: inherit; font-size: 0.85rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--page);
+    color: var(--text-primary);
   }
-  footer {
-    padding: 0.6rem 1.5rem;
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    text-align: center;
-    border-top: 1px solid var(--border);
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 0.9rem;
+    margin-bottom: 1.1rem;
   }
+  .chart-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.1rem 0.75rem;
+    position: relative;
+  }
+  .chart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+  .chart-head h3 { font-size: 0.9rem; font-weight: 700; }
+  .chart-tag { font-size: 0.68rem; color: var(--text-muted); background: var(--page); border: 1px solid var(--border); padding: 0.15rem 0.5rem; border-radius: 999px; }
+  .chart-body { width: 100%; }
+  .chart-empty { font-size: 0.8rem; color: var(--text-muted); padding: 2rem 0; text-align: center; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; margin-top: 0.6rem; font-size: 0.78rem; color: var(--text-secondary); }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+  .legend-swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+
+  .tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: var(--text-primary);
+    color: var(--surface-1);
+    font-size: 0.74rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 10px));
+    transition: opacity 0.08s ease;
+    z-index: 50;
+    white-space: nowrap;
+  }
+  .tooltip.show { opacity: 1; }
+
+  .table-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .table-head { padding: 0.85rem 1.1rem 0.6rem; display: flex; justify-content: space-between; align-items: center; }
+  .table-head h3 { font-size: 0.9rem; font-weight: 700; }
+  .table-head span { font-size: 0.76rem; color: var(--text-muted); }
+  .table-scroll { max-height: 420px; overflow: auto; border-top: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  thead th {
+    position: sticky; top: 0;
+    background: var(--surface-1);
+    text-align: left;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--gridline);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+  tbody td.primary { color: var(--text-primary); font-weight: 600; }
+  tbody tr:last-child td { border-bottom: none; }
+  .pill {
+    display: inline-block;
+    font-size: 0.72rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: var(--page);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  footer { text-align: center; font-size: 0.72rem; color: var(--text-muted); padding: 1rem 1.5rem 1.5rem; }
+  a.src-link { color: inherit; }
 </style>
 </head>
 <body>
   <header>
-    <div class="title-block">
-      <h1>CCS Dashboard</h1>
-      <p>Live view of the published Google Sheet</p>
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9s1.3-6.4 3.8-9z"/></svg>
+      </div>
+      <div>
+        <h1>DLSU CCS Faculty Publications</h1>
+        <p>Consolidated Research Analytics &amp; SJR Quartiles Dashboard</p>
+        <div id="status-line" class="status-line ok">Loading live sheet…</div>
+      </div>
     </div>
-    <div class="actions">
-      <button id="refresh-btn" type="button">Refresh</button>
-      <a class="primary" id="open-link"
-         href="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vRqq9Npar94a_ik99hyFt-meTSh3ziRrsSs9e3XeZ_6tUztFg6X7FG-Ls2jN5Mn_kYdf0j9to1VV2EW/pubhtml"
-         target="_blank" rel="noopener">Open full sheet ↗</a>
-    </div>
+    <button id="theme-toggle" type="button" title="Toggle theme" aria-label="Toggle theme">
+      <svg id="theme-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+    </button>
   </header>
+
   <main>
-    <div class="sheet-frame">
-      <iframe id="sheet-iframe"
-        src="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vRqq9Npar94a_ik99hyFt-meTSh3ziRrsSs9e3XeZ_6tUztFg6X7FG-Ls2jN5Mn_kYdf0j9to1VV2EW/pubhtml?widget=true&amp;headers=false"
-        loading="lazy"
-        title="Published Google Sheet"></iframe>
+    <div id="banner" class="banner">
+      <div class="banner-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.86 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.86a2 2 0 0 0-3.4 0z"/></svg>
+        <span>Couldn't load the live Google Sheet</span>
+      </div>
+      <p id="banner-detail"></p>
+      <p>URL attempted: <code id="banner-url"></code></p>
+      <p>"Failed to fetch" almost always means the browser blocked the cross-origin request (CORS) or this page was opened from a sandboxed preview — not that the sheet is unpublished. Showing sample data below in the meantime.</p>
+    </div>
+
+    <div id="col-banner" class="banner" style="border-color: var(--warning); background: color-mix(in srgb, var(--warning) 12%, var(--surface-1));">
+      <div class="banner-title" style="color: var(--text-primary);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.86 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.86a2 2 0 0 0-3.4 0z"/></svg>
+        <span>Some columns couldn't be confidently matched</span>
+      </div>
+      <p id="col-banner-detail"></p>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Total Publications</div>
+          <div class="stat-value tabular" id="stat-total">–</div>
+          <div class="stat-sub" id="stat-total-sub">Active subset</div>
+        </div>
+        <div class="stat-icon" style="background: color-mix(in srgb, var(--series-2) 16%, var(--surface-1)); color: var(--series-2);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22.5z"/><path d="M4 4.5v16A2.5 2.5 0 0 0 6.5 23H20"/></svg>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Scopus Indexed Ratio</div>
+          <div class="stat-value tabular" id="stat-scopus">–</div>
+          <div class="stat-sub" id="stat-scopus-sub">–</div>
+        </div>
+        <div class="stat-icon" style="background: color-mix(in srgb, var(--series-5) 16%, var(--surface-1)); color: var(--series-5);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Top Quartile (Q1)</div>
+          <div class="stat-value tabular" id="stat-q1">–</div>
+          <div class="stat-sub" id="stat-q1-sub">Of total consolidated</div>
+        </div>
+        <div class="stat-icon" style="background: color-mix(in srgb, var(--series-3) 20%, var(--surface-1)); color: var(--series-3);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 2 2.9 6.6 7.1.7-5.4 4.7 1.6 7-6.2-3.7L6 21l1.6-7-5.4-4.7 7.1-.7z"/></svg>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Research Faculty</div>
+          <div class="stat-value tabular" id="stat-faculty">–</div>
+          <div class="stat-sub">Unique authors listed</div>
+        </div>
+        <div class="stat-icon" style="background: color-mix(in srgb, var(--series-1) 16%, var(--surface-1)); color: var(--series-1);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17.5" cy="9" r="2.6"/><path d="M15.5 20a5.2 5.2 0 0 1 6.7-4.9"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-field">
+        <label for="f-search">Search Publications / Faculty / Venue</label>
+        <input id="f-search" type="text" placeholder="Type paper title, co-author names, journal/conference or publication details…" />
+      </div>
+      <div class="filter-field">
+        <label for="f-year">Publication Year</label>
+        <select id="f-year"><option value="">All</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="f-class">Classification</label>
+        <select id="f-class"><option value="">All Classifications</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="f-type">Type</label>
+        <select id="f-type"><option value="">All</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="f-dept">Department</label>
+        <select id="f-dept"><option value="">All</option></select>
+      </div>
+      <div class="filter-field">
+        <label for="f-quartile">Highest Quartile</label>
+        <select id="f-quartile"><option value="">All Quartiles</option></select>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-head"><h3>Publications per Publication Year</h3><span class="chart-tag">Annual Volume</span></div>
+        <div class="chart-body" id="chart-year"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><h3>Category Indexation</h3><span class="chart-tag" id="donut-tag">by Classification</span></div>
+        <div class="chart-body" id="chart-donut"></div>
+        <div class="legend" id="donut-legend"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><h3>Publication Formats</h3><span class="chart-tag">Venue Types</span></div>
+        <div class="chart-body" id="chart-type"></div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-head">
+        <h3>Publications</h3>
+        <span id="table-count">0 rows</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead id="table-head-row"></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
     </div>
   </main>
+
   <footer>
-    Data is served live from Google Sheets (Publish to web). Edits made in the source spreadsheet appear here automatically after Google's periodic republish cycle.
+    Source: <a class="src-link" id="footer-link" href="#" target="_blank" rel="noopener">published Google Sheet</a> · Data refreshes on page load
   </footer>
-  <script>
-    document.getElementById('refresh-btn').addEventListener('click', function () {
-      var frame = document.getElementById('sheet-iframe');
-      var url = new URL(frame.src);
-      url.searchParams.set('_ts', Date.now());
-      frame.src = url.toString();
+
+  <div class="tooltip" id="tooltip"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var SHEET_ID = "1c4ilWtBXwdQth8IXd6MgZ4odhWubQSc69AmYohgYrbs";
+  var GID = "1125842073";
+  var CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&gid=" + GID;
+  var PUB_URL = "https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vRqq9Npar94a_ik99hyFt-meTSh3ziRrsSs9e3XeZ_6tUztFg6X7FG-Ls2jN5Mn_kYdf0j9to1VV2EW/pubhtml";
+
+  document.getElementById("footer-link").href = PUB_URL;
+
+  // ---------- sample fallback data (mirrors expected shape/volume) ----------
+  var SAMPLE_ROWS = [
+    { title: "Deep Learning Approaches for Low-Resource Filipino NLP", faculty: "Dela Cruz, J.; Santos, M.", venue: "Journal of Applied Computing", year: "2023", classification: "Scopus", type: "Journal", department: "CS", quartile: "Q1" },
+    { title: "A Survey of Human-Computer Interaction Trends in Higher Education", faculty: "Reyes, A.; Tan, K.", venue: "International Journal of HCI Studies", year: "2024", classification: "Scopus", type: "Journal", department: "IT", quartile: "Q2" },
+    { title: "Distributed Systems Resilience Under Network Partition", faculty: "Garcia, L.; Lim, P.", venue: "IEEE Intl. Conference on Distributed Computing", year: "2024", classification: "Scopus", type: "International Conference", department: "CS", quartile: "Q1" },
+    { title: "Software Engineering Practices in Agile University Capstones", faculty: "Bautista, R.; Cruz, N.", venue: "Journal of Software Engineering Education", year: "2025", classification: "Scopus", type: "Journal", department: "SE", quartile: "Q3" },
+    { title: "Community-Based IT Adoption in Local Government Units", faculty: "Ramos, S.; Villanueva, T.", venue: "Philippine Local Journal of Information Systems", year: "2025", classification: "Refereed", type: "Local Journal", department: "IT", quartile: "" },
+    { title: "Explainable AI for Academic Early-Warning Systems", faculty: "Mendoza, C.; Aquino, D.", venue: "Journal of Educational Data Mining", year: "2026", classification: "Scopus", type: "Journal", department: "CS", quartile: "Q1" }
+  ];
+
+  var FIELD_ALIASES = {
+    title: ["title", "publicationtitle", "papertitle", "titleofpaper"],
+    faculty: ["faculty", "author", "authors", "facultyname", "facultymembers", "researcher", "researchers", "proponent", "proponents"],
+    venue: ["venue", "journal", "journalconference", "journalorconference", "publisher", "publicationvenue", "conference"],
+    year: ["year", "publicationyear", "pubyear", "yearpublished"],
+    classification: ["classification", "category", "indexation", "scopusrefereed", "indexed"],
+    type: ["type", "publicationtype", "format", "venuetype"],
+    department: ["department", "dept", "college", "unit"],
+    quartile: ["quartile", "sjrquartile", "highestquartile", "sjr", "quartileranking"]
+  };
+  var FIELD_LABELS = {
+    title: "Title", faculty: "Faculty", venue: "Venue", year: "Year",
+    classification: "Classification", type: "Type", department: "Department", quartile: "Quartile"
+  };
+
+  function normalizeHeader(h) {
+    return String(h || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  }
+
+  function parseCSV(text) {
+    var rows = [], row = [], field = "", i = 0, inQuotes = false;
+    while (i < text.length) {
+      var c = text[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
+          inQuotes = false; i++; continue;
+        }
+        field += c; i++; continue;
+      } else {
+        if (c === '"') { inQuotes = true; i++; continue; }
+        if (c === ",") { row.push(field); field = ""; i++; continue; }
+        if (c === "\r") { i++; continue; }
+        if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; i++; continue; }
+        field += c; i++; continue;
+      }
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    return rows.filter(function (r) { return r.length > 1 || (r.length === 1 && r[0] !== ""); });
+  }
+
+  function detectColumns(headerRow) {
+    var normalized = headerRow.map(normalizeHeader);
+    var map = {}, missing = [];
+    Object.keys(FIELD_ALIASES).forEach(function (field) {
+      var aliases = FIELD_ALIASES[field];
+      var idx = -1;
+      for (var a = 0; a < aliases.length && idx === -1; a++) {
+        idx = normalized.indexOf(aliases[a]);
+      }
+      if (idx === -1) {
+        for (var n = 0; n < normalized.length && idx === -1; n++) {
+          for (var a2 = 0; a2 < aliases.length; a2++) {
+            if (normalized[n].indexOf(aliases[a2]) !== -1) { idx = n; break; }
+          }
+        }
+      }
+      if (idx === -1) { missing.push(FIELD_LABELS[field]); }
+      map[field] = idx;
     });
-  </script>
+    return { map: map, missing: missing };
+  }
+
+  function rowsToRecords(rows) {
+    if (!rows.length) return { records: [], missing: Object.keys(FIELD_LABELS).map(function (k) { return FIELD_LABELS[k]; }) };
+    var header = rows[0];
+    var detection = detectColumns(header);
+    var records = [];
+    for (var r = 1; r < rows.length; r++) {
+      var row = rows[r];
+      if (!row.some(function (v) { return String(v || "").trim() !== ""; })) continue;
+      var rec = {};
+      Object.keys(detection.map).forEach(function (field) {
+        var idx = detection.map[field];
+        rec[field] = idx >= 0 && idx < row.length ? String(row[idx] || "").trim() : "";
+      });
+      records.push(rec);
+    }
+    return { records: records, missing: detection.missing };
+  }
+
+  function splitFaculty(cell) {
+    if (!cell) return [];
+    var parts = cell.split(/;|(?:\s+&\s+)|(?:\s+and\s+)/i);
+    return parts.map(function (p) { return p.trim(); }).filter(Boolean);
+  }
+
+  // ---------- state ----------
+  var ALL_RECORDS = [];
+  var CATEGORY_COLOR_ORDER = ["--series-1", "--series-2", "--series-3", "--series-4", "--series-5", "--series-6", "--series-7", "--series-8"];
+  var classificationColorMap = {};
+  var typeColorMap = {};
+
+  function cssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  function buildStableColorMap(records, field) {
+    var map = {}, order = [];
+    records.forEach(function (rec) {
+      var v = rec[field] || "Unspecified";
+      if (order.indexOf(v) === -1) order.push(v);
+    });
+    order.forEach(function (v, i) {
+      map[v] = CATEGORY_COLOR_ORDER[i % CATEGORY_COLOR_ORDER.length];
+    });
+    return map;
+  }
+
+  function uniqueSorted(records, field, opts) {
+    opts = opts || {};
+    var set = {};
+    records.forEach(function (r) { if (r[field]) set[r[field]] = true; });
+    var arr = Object.keys(set);
+    if (opts.numericYear) {
+      arr.sort(function (a, b) { return Number(b) - Number(a); });
+    } else if (opts.quartile) {
+      arr.sort(function (a, b) {
+        var qa = /Q(\d)/i.exec(a), qb = /Q(\d)/i.exec(b);
+        if (qa && qb) return Number(qa[1]) - Number(qb[1]);
+        if (qa) return -1;
+        if (qb) return 1;
+        return a.localeCompare(b);
+      });
+    } else {
+      arr.sort();
+    }
+    return arr;
+  }
+
+  function populateSelect(id, values, placeholder) {
+    var el = document.getElementById(id);
+    var current = el.value;
+    el.innerHTML = "";
+    var opt0 = document.createElement("option");
+    opt0.value = ""; opt0.textContent = placeholder;
+    el.appendChild(opt0);
+    values.forEach(function (v) {
+      var opt = document.createElement("option");
+      opt.value = v; opt.textContent = v;
+      el.appendChild(opt);
+    });
+    if (values.indexOf(current) !== -1) el.value = current;
+  }
+
+  function currentFilters() {
+    return {
+      search: document.getElementById("f-search").value.trim().toLowerCase(),
+      year: document.getElementById("f-year").value,
+      classification: document.getElementById("f-class").value,
+      type: document.getElementById("f-type").value,
+      department: document.getElementById("f-dept").value,
+      quartile: document.getElementById("f-quartile").value
+    };
+  }
+
+  function applyFilters(records, f) {
+    return records.filter(function (r) {
+      if (f.year && r.year !== f.year) return false;
+      if (f.classification && r.classification !== f.classification) return false;
+      if (f.type && r.type !== f.type) return false;
+      if (f.department && r.department !== f.department) return false;
+      if (f.quartile && r.quartile !== f.quartile) return false;
+      if (f.search) {
+        var hay = (r.title + " " + r.faculty + " " + r.venue).toLowerCase();
+        if (hay.indexOf(f.search) === -1) return false;
+      }
+      return true;
+    });
+  }
+
+  // ---------- tooltip ----------
+  var tooltipEl = document.getElementById("tooltip");
+  function showTooltip(x, y, html) {
+    tooltipEl.innerHTML = html;
+    tooltipEl.style.left = x + "px";
+    tooltipEl.style.top = y + "px";
+    tooltipEl.classList.add("show");
+  }
+  function hideTooltip() { tooltipEl.classList.remove("show"); }
+
+  // ---------- SVG helpers ----------
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  function svgEl(tag, attrs) {
+    var el = document.createElementNS(SVG_NS, tag);
+    Object.keys(attrs || {}).forEach(function (k) { el.setAttribute(k, attrs[k]); });
+    return el;
+  }
+
+  function renderEmpty(container, msg) {
+    container.innerHTML = '<div class="chart-empty">' + msg + '</div>';
+  }
+
+  function niceStep(roughStep) {
+    var exponent = Math.floor(Math.log10(roughStep));
+    var fraction = roughStep / Math.pow(10, exponent);
+    var niceFraction = fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 5 ? 5 : 10;
+    return niceFraction * Math.pow(10, exponent);
+  }
+
+  // vertical / horizontal single-hue bar chart
+  function renderBarChart(container, data, colorVar, opts) {
+    opts = opts || {};
+    container.innerHTML = "";
+    if (!data.length) { renderEmpty(container, "No data for current filters"); return; }
+    var horizontal = !!opts.horizontal;
+    var width = container.clientWidth || 320;
+    var height = opts.height || 220;
+    var padding = horizontal ? { top: 6, right: 34, bottom: 6, left: 118 } : { top: 18, right: 10, bottom: 26, left: 34 };
+    var plotW = width - padding.left - padding.right;
+    var plotH = height - padding.top - padding.bottom;
+    var maxVal = Math.max.apply(null, data.map(function (d) { return d.value; })) || 1;
+    var tickStep = Math.max(1, niceStep(maxVal / 4 || 1));
+    var niceMax = Math.ceil(maxVal / tickStep) * tickStep;
+    var stepCount = Math.round(niceMax / tickStep);
+    var color = cssVar(colorVar);
+    var gridline = cssVar("--gridline");
+    var muted = cssVar("--text-muted");
+    var baseline = cssVar("--baseline");
+    var primary = cssVar("--text-primary");
+
+    var svg = svgEl("svg", { width: width, height: height, viewBox: "0 0 " + width + " " + height, style: "overflow:visible;display:block" });
+
+    for (var s = 0; s <= stepCount; s++) {
+      var v = tickStep * s;
+      if (horizontal) {
+        var gx = padding.left + (v / niceMax) * plotW;
+        svg.appendChild(svgEl("line", { x1: gx, x2: gx, y1: padding.top, y2: height - padding.bottom, stroke: gridline, "stroke-width": 1 }));
+        svg.appendChild(labelText(gx, height - padding.bottom + 14, Math.round(v), muted, "middle"));
+      } else {
+        var gy = height - padding.bottom - (v / niceMax) * plotH;
+        svg.appendChild(svgEl("line", { x1: padding.left, x2: width - padding.right, y1: gy, y2: gy, stroke: gridline, "stroke-width": 1 }));
+        svg.appendChild(labelText(padding.left - 8, gy + 3, Math.round(v), muted, "end"));
+      }
+    }
+
+    var n = data.length;
+    var band = (horizontal ? plotH : plotW) / n;
+    var thickness = Math.min(24, band * 0.55);
+    var gap = 2;
+
+    data.forEach(function (d, i) {
+      var group = svgEl("g", { style: "cursor:pointer" });
+      var rect;
+      if (horizontal) {
+        var y0 = padding.top + i * band + (band - thickness) / 2;
+        var w = (d.value / niceMax) * plotW;
+        rect = svgEl("rect", {
+          x: padding.left, y: y0 + gap / 2, width: Math.max(w - gap, 1), height: thickness - gap,
+          rx: 4, ry: 4, fill: color
+        });
+        group.appendChild(rect);
+        group.appendChild(labelText(padding.left - 8, y0 + thickness / 2 + 4, d.label, muted, "end"));
+        group.appendChild(labelText(padding.left + w + 6, y0 + thickness / 2 + 4, d.value, primary, "start", true));
+      } else {
+        var x0 = padding.left + i * band + (band - thickness) / 2;
+        var h = (d.value / niceMax) * plotH;
+        var y = height - padding.bottom - h;
+        rect = svgEl("rect", {
+          x: x0 + gap / 2, y: y, width: thickness - gap, height: Math.max(h, 1),
+          rx: 4, ry: 4, fill: color
+        });
+        group.appendChild(rect);
+        group.appendChild(labelText(x0 + thickness / 2, height - padding.bottom + 16, d.label, muted, "middle"));
+        group.appendChild(labelText(x0 + thickness / 2, y - 6, d.value, primary, "middle", true));
+      }
+      group.addEventListener("mousemove", function (ev) {
+        rect.setAttribute("opacity", "0.82");
+        showTooltip(ev.clientX, ev.clientY, "<strong>" + d.label + "</strong><br/>" + d.value + " publication" + (d.value === 1 ? "" : "s"));
+      });
+      group.addEventListener("mouseleave", function () { rect.setAttribute("opacity", "1"); hideTooltip(); });
+      svg.appendChild(group);
+    });
+
+    if (!horizontal) {
+      svg.appendChild(svgEl("line", { x1: padding.left, x2: width - padding.right, y1: height - padding.bottom, y2: height - padding.bottom, stroke: baseline, "stroke-width": 1 }));
+    } else {
+      svg.appendChild(svgEl("line", { x1: padding.left, x2: padding.left, y1: padding.top, y2: height - padding.bottom, stroke: baseline, "stroke-width": 1 }));
+    }
+
+    container.appendChild(svg);
+  }
+
+  function labelText(x, y, text, fill, anchor, bold) {
+    var el = svgEl("text", {
+      x: x, y: y, fill: fill, "text-anchor": anchor, "font-size": bold ? 11 : 10.5,
+      "font-weight": bold ? 700 : 400, "font-family": "system-ui, sans-serif"
+    });
+    el.textContent = text;
+    return el;
+  }
+
+  function renderDonut(container, legendEl, data) {
+    container.innerHTML = "";
+    legendEl.innerHTML = "";
+    var total = data.reduce(function (s, d) { return s + d.value; }, 0);
+    if (!total) { renderEmpty(container, "No data for current filters"); return; }
+    var size = Math.min(container.clientWidth || 260, 260);
+    var height = 220;
+    var cx = (container.clientWidth || size) / 2, cy = height / 2;
+    var rOuter = Math.min(cx, cy) - 10;
+    var rInner = rOuter * 0.6;
+    var svg = svgEl("svg", { width: container.clientWidth || size, height: height, viewBox: "0 0 " + (container.clientWidth || size) + " " + height, style: "display:block" });
+
+    var angle = -Math.PI / 2;
+    var gapRad = 0.02;
+
+    data.forEach(function (d) {
+      var frac = d.value / total;
+      var sweep = frac * (Math.PI * 2) - gapRad;
+      var a0 = angle, a1 = angle + Math.max(sweep, 0.001);
+      var path = donutSlicePath(cx, cy, rInner, rOuter, a0, a1);
+      var el = svgEl("path", { d: path, fill: cssVar(d.colorVar) });
+      el.style.cursor = "pointer";
+      el.addEventListener("mousemove", function (ev) {
+        el.setAttribute("opacity", "0.82");
+        showTooltip(ev.clientX, ev.clientY, "<strong>" + d.label + "</strong><br/>" + d.value + " (" + Math.round(frac * 1000) / 10 + "%)");
+      });
+      el.addEventListener("mouseleave", function () { el.setAttribute("opacity", "1"); hideTooltip(); });
+      svg.appendChild(el);
+      angle += frac * (Math.PI * 2);
+    });
+
+    var centerText = svgEl("text", { x: cx, y: cy - 4, "text-anchor": "middle", fill: cssVar("--text-primary"), "font-size": 20, "font-weight": 700, "font-family": "system-ui, sans-serif" });
+    centerText.textContent = total;
+    svg.appendChild(centerText);
+    var centerSub = svgEl("text", { x: cx, y: cy + 14, "text-anchor": "middle", fill: cssVar("--text-muted"), "font-size": 10.5, "font-family": "system-ui, sans-serif" });
+    centerSub.textContent = "total";
+    svg.appendChild(centerSub);
+
+    container.appendChild(svg);
+
+    data.forEach(function (d) {
+      var item = document.createElement("div");
+      item.className = "legend-item";
+      var pct = Math.round((d.value / total) * 1000) / 10;
+      item.innerHTML = '<span class="legend-swatch" style="background:' + cssVar(d.colorVar) + '"></span>' + d.label + " · " + d.value + " (" + pct + "%)";
+      legendEl.appendChild(item);
+    });
+  }
+
+  function donutSlicePath(cx, cy, rInner, rOuter, a0, a1) {
+    var x0o = cx + rOuter * Math.cos(a0), y0o = cy + rOuter * Math.sin(a0);
+    var x1o = cx + rOuter * Math.cos(a1), y1o = cy + rOuter * Math.sin(a1);
+    var x1i = cx + rInner * Math.cos(a1), y1i = cy + rInner * Math.sin(a1);
+    var x0i = cx + rInner * Math.cos(a0), y0i = cy + rInner * Math.sin(a0);
+    var largeArc = (a1 - a0) > Math.PI ? 1 : 0;
+    return [
+      "M", x0o, y0o,
+      "A", rOuter, rOuter, 0, largeArc, 1, x1o, y1o,
+      "L", x1i, y1i,
+      "A", rInner, rInner, 0, largeArc, 0, x0i, y0i,
+      "Z"
+    ].join(" ");
+  }
+
+  // ---------- table ----------
+  var TABLE_FIELDS = ["title", "faculty", "venue", "year", "classification", "type", "department", "quartile"];
+
+  function renderTable(records, missing) {
+    var head = document.getElementById("table-head-row");
+    var body = document.getElementById("table-body");
+    head.innerHTML = "";
+    var tr = document.createElement("tr");
+    TABLE_FIELDS.forEach(function (f) {
+      var th = document.createElement("th");
+      th.textContent = FIELD_LABELS[f] + (missing.indexOf(FIELD_LABELS[f]) !== -1 ? " ⚠" : "");
+      tr.appendChild(th);
+    });
+    head.appendChild(tr);
+
+    body.innerHTML = "";
+    var frag = document.createDocumentFragment();
+    records.forEach(function (r) {
+      var row = document.createElement("tr");
+      TABLE_FIELDS.forEach(function (f, idx) {
+        var td = document.createElement("td");
+        if (idx === 0) td.className = "primary";
+        if (f === "quartile" && r[f]) {
+          td.innerHTML = '<span class="pill">' + escapeHtml(r[f]) + "</span>";
+        } else {
+          td.textContent = r[f] || "—";
+        }
+        row.appendChild(td);
+      });
+      frag.appendChild(row);
+    });
+    body.appendChild(frag);
+    document.getElementById("table-count").textContent = records.length + (records.length === 1 ? " row" : " rows");
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  // ---------- render pipeline ----------
+  function render() {
+    var f = currentFilters();
+    var filtered = applyFilters(ALL_RECORDS, f);
+
+    var total = filtered.length;
+    document.getElementById("stat-total").textContent = total;
+
+    var scopusCount = filtered.filter(function (r) { return /scopus/i.test(r.classification); }).length;
+    var refereedCount = filtered.filter(function (r) { return r.classification && !/scopus/i.test(r.classification); }).length;
+    document.getElementById("stat-scopus").textContent = total ? (Math.round((scopusCount / total) * 1000) / 10) + "%" : "–";
+    document.getElementById("stat-scopus-sub").textContent = total ? (scopusCount + " Scopus / " + refereedCount + " Refereed") : "No data";
+
+    var q1Count = filtered.filter(function (r) { return /^q1$/i.test((r.quartile || "").trim()); }).length;
+    document.getElementById("stat-q1").textContent = total ? (Math.round((q1Count / total) * 1000) / 10) + "%" : "–";
+
+    var facultySet = {};
+    filtered.forEach(function (r) { splitFaculty(r.faculty).forEach(function (name) { facultySet[name] = true; }); });
+    document.getElementById("stat-faculty").textContent = Object.keys(facultySet).length;
+
+    // chart: publications per year
+    var yearCounts = {};
+    filtered.forEach(function (r) { if (r.year) yearCounts[r.year] = (yearCounts[r.year] || 0) + 1; });
+    var yearData = Object.keys(yearCounts).sort().map(function (y) { return { label: y, value: yearCounts[y] }; });
+    renderBarChart(document.getElementById("chart-year"), yearData, "--series-1", { height: 220 });
+
+    // chart: classification donut (stable colors across the whole dataset)
+    var classCounts = {};
+    filtered.forEach(function (r) { var v = r.classification || "Unspecified"; classCounts[v] = (classCounts[v] || 0) + 1; });
+    var donutData = Object.keys(classCounts).map(function (k) {
+      return { label: k, value: classCounts[k], colorVar: classificationColorMap[k] || "--series-1" };
+    });
+    renderDonut(document.getElementById("chart-donut"), document.getElementById("donut-legend"), donutData);
+
+    // chart: publication formats (single hue horizontal bar, sorted desc)
+    var typeCounts = {};
+    filtered.forEach(function (r) { var v = r.type || "Unspecified"; typeCounts[v] = (typeCounts[v] || 0) + 1; });
+    var typeData = Object.keys(typeCounts).map(function (k) { return { label: k, value: typeCounts[k] }; })
+      .sort(function (a, b) { return b.value - a.value; });
+    renderBarChart(document.getElementById("chart-type"), typeData, "--series-5", { horizontal: true, height: Math.max(160, typeData.length * 52) });
+
+    renderTable(filtered, currentMissing);
+  }
+
+  var currentMissing = [];
+
+  function initFilters() {
+    populateSelect("f-year", uniqueSorted(ALL_RECORDS, "year", { numericYear: true }), "All");
+    populateSelect("f-class", uniqueSorted(ALL_RECORDS, "classification"), "All Classifications");
+    populateSelect("f-type", uniqueSorted(ALL_RECORDS, "type"), "All");
+    populateSelect("f-dept", uniqueSorted(ALL_RECORDS, "department"), "All");
+    populateSelect("f-quartile", uniqueSorted(ALL_RECORDS, "quartile", { quartile: true }), "All Quartiles");
+  }
+
+  ["f-search", "f-year", "f-class", "f-type", "f-dept", "f-quartile"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", render);
+    document.getElementById(id).addEventListener("change", render);
+  });
+  window.addEventListener("resize", debounce(render, 150));
+
+  function debounce(fn, ms) {
+    var t; return function () { clearTimeout(t); t = setTimeout(fn, ms); };
+  }
+
+  function setUp(records, missing) {
+    ALL_RECORDS = records;
+    currentMissing = missing || [];
+    classificationColorMap = buildStableColorMap(ALL_RECORDS, "classification");
+    typeColorMap = buildStableColorMap(ALL_RECORDS, "type");
+    initFilters();
+    render();
+  }
+
+  function showFetchError(detail) {
+    document.getElementById("banner").classList.add("show");
+    document.getElementById("banner-detail").textContent = detail;
+    document.getElementById("banner-url").textContent = CSV_URL;
+    document.getElementById("status-line").className = "status-line warn";
+    document.getElementById("status-line").textContent = "Could not reach Google Sheet — showing sample data";
+  }
+
+  function showColumnWarning(missing) {
+    if (!missing.length) return;
+    document.getElementById("col-banner").classList.add("show");
+    document.getElementById("col-banner-detail").textContent =
+      "Couldn't confidently detect: " + missing.join(", ") + ". Those fields will show as \"—\" until the sheet's header names are adjusted or the column matching in index.html is updated.";
+  }
+
+  function loadLive() {
+    fetch(CSV_URL, { cache: "no-store" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.text();
+      })
+      .then(function (text) {
+        var rows = parseCSV(text);
+        var result = rowsToRecords(rows);
+        if (!result.records.length) throw new Error("Sheet returned no data rows");
+        document.getElementById("status-line").className = "status-line ok";
+        document.getElementById("status-line").textContent = "Live • " + result.records.length + " publications • loaded " + new Date().toLocaleTimeString();
+        showColumnWarning(result.missing);
+        setUp(result.records, result.missing);
+      })
+      .catch(function (err) {
+        showFetchError(err.message || String(err));
+        setUp(SAMPLE_ROWS, []);
+      });
+  }
+
+  // ---------- theme toggle ----------
+  var THEME_KEY = "ccs-dashboard-theme";
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    document.getElementById("theme-icon").innerHTML = theme === "dark"
+      ? '<path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/>'
+      : '<circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" fill="none"/>';
+  }
+  document.getElementById("theme-toggle").addEventListener("click", function () {
+    var cur = document.documentElement.getAttribute("data-theme") ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    var next = cur === "dark" ? "light" : "dark";
+    localStorage.setItem(THEME_KEY, next);
+    applyTheme(next);
+    render();
+  });
+  (function initTheme() {
+    var saved = localStorage.getItem(THEME_KEY);
+    if (saved) applyTheme(saved);
+  })();
+
+  loadLive();
+})();
+</script>
 </body>
 </html>

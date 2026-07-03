@@ -293,8 +293,6 @@
     white-space: nowrap;
   }
 
-  footer { text-align: center; font-size: 0.72rem; color: var(--text-muted); padding: 1rem 1.5rem 1.5rem; }
-  a.src-link { color: inherit; }
 
   tbody tr.clickable-row { cursor: pointer; }
   tbody tr.clickable-row:hover { background: var(--page); }
@@ -481,7 +479,7 @@
         <div class="legend" id="donut-legend"></div>
       </div>
       <div class="chart-card">
-        <div class="chart-head"><h3>Publication Formats</h3><span class="chart-tag">Venue Types</span></div>
+        <div class="chart-head"><h3>Publication Type</h3><span class="chart-tag">By Type</span></div>
         <div class="chart-body" id="chart-type"></div>
       </div>
     </div>
@@ -522,10 +520,6 @@
       </div>
     </div>
   </main>
-
-  <footer>
-    Source: <a class="src-link" id="footer-link" href="#" target="_blank" rel="noopener">published Google Sheet</a> · Data refreshes on page load
-  </footer>
 
   <div class="tooltip" id="tooltip"></div>
 
@@ -581,9 +575,6 @@
   var SHEET_ID = "1c4ilWtBXwdQth8IXd6MgZ4odhWubQSc69AmYohgYrbs";
   var GID = "1125842073";
   var CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&gid=" + GID;
-  var PUB_URL = "https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vRqq9Npar94a_ik99hyFt-meTSh3ziRrsSs9e3XeZ_6tUztFg6X7FG-Ls2jN5Mn_kYdf0j9to1VV2EW/pubhtml";
-
-  document.getElementById("footer-link").href = PUB_URL;
 
   // ---------- sample fallback data (mirrors expected shape/volume) ----------
   var SAMPLE_ROWS = [

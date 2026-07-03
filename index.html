@@ -414,7 +414,7 @@
   var FIELD_ALIASES = {
     title: ["title", "publicationtitle", "papertitle", "titleofpaper"],
     faculty: ["faculty", "author", "authors", "facultyname", "facultymembers", "researcher", "researchers", "proponent", "proponents"],
-    venue: ["venue", "journal", "journalconference", "journalorconference", "publisher", "publicationvenue", "conference"],
+    venue: ["venue", "journal", "journalconference", "journalorconference", "publicationvenue", "conference", "titleofjournalorconference"],
     year: ["year", "publicationyear", "pubyear", "yearpublished"],
     classification: ["classification", "category", "indexation", "scopusrefereed", "indexed"],
     type: ["type", "publicationtype", "format", "venuetype"],
@@ -474,12 +474,27 @@
     return { map: map, missing: missing };
   }
 
+  // Sheets often have title/summary rows above the real header row
+  // (e.g. "CCS Publications for Dashboard", "Last Update (Scopus)"), so scan
+  // the first several rows and pick whichever one matches the most known
+  // field aliases rather than assuming row 0 is the header.
+  function findHeaderRow(rows) {
+    var searchLimit = Math.min(rows.length, 20);
+    var bestIdx = 0, bestDetection = detectColumns(rows[0] || []), bestScore = -1;
+    for (var i = 0; i < searchLimit; i++) {
+      var detection = detectColumns(rows[i]);
+      var score = Object.keys(FIELD_LABELS).length - detection.missing.length;
+      if (score > bestScore) { bestScore = score; bestIdx = i; bestDetection = detection; }
+    }
+    return { rowIndex: bestIdx, detection: bestDetection };
+  }
+
   function rowsToRecords(rows) {
     if (!rows.length) return { records: [], missing: Object.keys(FIELD_LABELS).map(function (k) { return FIELD_LABELS[k]; }) };
-    var header = rows[0];
-    var detection = detectColumns(header);
+    var found = findHeaderRow(rows);
+    var detection = found.detection;
     var records = [];
-    for (var r = 1; r < rows.length; r++) {
+    for (var r = found.rowIndex + 1; r < rows.length; r++) {
       var row = rows[r];
       if (!row.some(function (v) { return String(v || "").trim() !== ""; })) continue;
       var rec = {};

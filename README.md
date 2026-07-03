@@ -22,7 +22,8 @@ published to the web.
     detail spec sheet (full title, complete author list, faculty,
     department, full citation details, and a per-subject-area SJR
     quartile/percentile breakdown)
-  - Light/dark theme (follows system preference, with a manual toggle)
+  - Light/dark theme (follows system preference by default; the toggle in
+    the header overrides it and persists the choice)
 
   If the live fetch fails (e.g. CORS, offline, or the sheet becomes
   unpublished), the dashboard falls back to bundled sample data and shows a

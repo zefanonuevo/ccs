@@ -83,4 +83,5 @@ under — every one of those departments when filtering.
 
 Update `SHEET_ID` and `GID` near the top of the `<script>` block in
 `index.html` (visible in the sheet's URL, or in a fetch error if the CSV
-export fails).
+export fails). `SHEET_ID` identifies the spreadsheet; `GID` identifies
+which tab within it.

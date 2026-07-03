@@ -44,6 +44,21 @@ matched, the dashboard shows a warning banner naming the missing field and
 renders "—" for it. To adjust matching, edit `FIELD_ALIASES` near the top
 of the `<script>` block in `index.html`.
 
+### SJR quartile/percentile breakdown
+
+The source sheet stores a publication's per-subject-area breakdown as three
+parallel columns — `Category`, `Quartile`, `Percentile` — each cell holding
+one newline-separated line per subject area, aligned by line position (e.g.
+line 3 of each column together describe one subject area). `getCategoryBreakdown()`
+zips these back into `{category, quartile, percentile}` rows; `bestQuartile()`
+derives the publication's overall "highest quartile" (used by the Q1 stat
+tile, the quartile filter, and the quartile pie chart) as the best value
+across that breakdown, not just whichever line comes first. A publication
+with only a single quartile/percentile value for multiple categories has
+that value reused across all of them. Sheets that instead pack
+`"Category, Q#, Top Nth"` lines into one combined column are supported as a
+fallback (`parseBreakdownRows`).
+
 ## Pointing at a different sheet or tab
 
 Update `SHEET_ID` and `GID` near the top of the `<script>` block in

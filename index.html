@@ -539,12 +539,12 @@
 
   // ---------- sample fallback data (mirrors expected shape/volume) ----------
   var SAMPLE_ROWS = [
-    { title: "Investigating the resistome, taxonomic composition, and mobilome of bacterial communities in hospital wastewaters of Metro Manila using a shotgun metagenomics approach", faculty: "Shrestha, Anish", authors: "Jiaan Carlo E. Santos, Daphne Janelyn L. Go, Paul K. Yu, Angelyn R. Lao, Luisa D. Enriquez, Llewelyn M. Espiritu, Anish M.S. Shrestha", venue: "Microbiology Spectrum", year: "2026", classification: "Scopus", type: "Journal", department: "ST", quartile: "Q1", category: "Ecology; Infectious Diseases; General Immunology and Microbiology; Physiology; Genetics; Microbiology (medical); Cell Biology", details: "Microbiology Spectrum\nAmerican Society for Microbiology\nvol. 14\niss. 5\npg. 1-17\ndoi: 10.1128/spectrum.03963-25\neid: 2-s2.0-105039441411", breakdown: "Ecology, Q1, Top 88th\nInfectious Diseases, Q1, Top 84th\nGeneral Immunology and Microbiology, Q1, Top 83rd\nPhysiology, Q1, Top 79th\nGenetics, Q1, Top 77th\nMicrobiology (medical), Q1, Top 77th\nCell Biology, Q2, Top 66th" },
-    { title: "A Survey of Human-Computer Interaction Trends in Higher Education", faculty: "Reyes, A.", authors: "Reyes, A., Dela Cruz, J., Tan, K.", venue: "International Journal of HCI Studies", year: "2024", classification: "Scopus", type: "Journal", department: "IT", quartile: "Q2", category: "Human Computer Interaction", details: "International Journal of HCI Studies\nSpringer\nvol. 12\npg. 45-60\ndoi: 10.1007/hci.2024.0012", breakdown: "Human Computer Interaction, Q2, Top 55th" },
-    { title: "Distributed Systems Resilience Under Network Partition", faculty: "Garcia, L.", authors: "Garcia, L., Lim, P.", venue: "IEEE Intl. Conference on Distributed Computing", year: "2024", classification: "Scopus", type: "International Conference", department: "CS", quartile: "Q1", category: "Computer Networks and Communications; Theoretical Computer Science", details: "IEEE Intl. Conference on Distributed Computing\nIEEE\nart. 118\ndoi: 10.1109/icdc.2024.0118", breakdown: "Computer Networks and Communications, Q1, Top 90th\nTheoretical Computer Science, Q1, Top 85th" },
-    { title: "Software Engineering Practices in Agile University Capstones", faculty: "Bautista, R.", authors: "Bautista, R., Cruz, N.", venue: "Journal of Software Engineering Education", year: "2025", classification: "Scopus", type: "Journal", department: "SE", quartile: "Q3", category: "Software", details: "Journal of Software Engineering Education\nACM\nvol. 9\npg. 12-30\ndoi: 10.1145/jsee.2025.0009", breakdown: "Software, Q3, Top 40th" },
-    { title: "Community-Based IT Adoption in Local Government Units", faculty: "Ramos, S.", authors: "Ramos, S., Villanueva, T.", venue: "Philippine Local Journal of Information Systems", year: "2025", classification: "Refereed", type: "Local Journal", department: "IT", quartile: "", category: "Computer Science Applications", details: "Philippine Local Journal of Information Systems\nPhilippine ICT Society\nvol. 7\npg. 1-15", breakdown: "" },
-    { title: "Explainable AI for Academic Early-Warning Systems", faculty: "Mendoza, C.", authors: "Mendoza, C., Dela Cruz, J., Aquino, D.", venue: "Journal of Educational Data Mining", year: "2026", classification: "Scopus", type: "Journal", department: "CS", quartile: "Q1", category: "Computer Vision and Pattern Recognition; Software", details: "Journal of Educational Data Mining\nSpringer\nvol. 18\npg. 200-220\ndoi: 10.1007/jedm.2026.0018", breakdown: "Computer Vision and Pattern Recognition, Q1, Top 82nd\nSoftware, Q2, Top 60th" }
+    { title: "Investigating the resistome, taxonomic composition, and mobilome of bacterial communities in hospital wastewaters of Metro Manila using a shotgun metagenomics approach", faculty: "Shrestha, Anish", authors: "Jiaan Carlo E. Santos, Daphne Janelyn L. Go, Paul K. Yu, Angelyn R. Lao, Luisa D. Enriquez, Llewelyn M. Espiritu, Anish M.S. Shrestha", venue: "Microbiology Spectrum", year: "2026", classification: "Scopus", type: "Journal", department: "ST", category: "Ecology\nInfectious Diseases\nGeneral Immunology and Microbiology\nPhysiology\nGenetics\nMicrobiology (medical)\nCell Biology", quartile: "Q1\nQ1\nQ1\nQ1\nQ1\nQ1\nQ2", percentile: "88th\n84th\n83rd\n79th\n77th\n77th\n66th", details: "Microbiology Spectrum\nAmerican Society for Microbiology\nvol. 14\niss. 5\npg. 1-17\ndoi: 10.1128/spectrum.03963-25\neid: 2-s2.0-105039441411" },
+    { title: "A Survey of Human-Computer Interaction Trends in Higher Education", faculty: "Reyes, A.", authors: "Reyes, A., Dela Cruz, J., Tan, K.", venue: "International Journal of HCI Studies", year: "2024", classification: "Scopus", type: "Journal", department: "IT", category: "Human Computer Interaction", quartile: "Q2", percentile: "55th", details: "International Journal of HCI Studies\nSpringer\nvol. 12\npg. 45-60\ndoi: 10.1007/hci.2024.0012" },
+    { title: "Distributed Systems Resilience Under Network Partition", faculty: "Garcia, L.", authors: "Garcia, L., Lim, P.", venue: "IEEE Intl. Conference on Distributed Computing", year: "2024", classification: "Scopus", type: "International Conference", department: "CS", category: "Computer Networks and Communications\nTheoretical Computer Science", quartile: "Q1\nQ1", percentile: "90th\n85th", details: "IEEE Intl. Conference on Distributed Computing\nIEEE\nart. 118\ndoi: 10.1109/icdc.2024.0118" },
+    { title: "Software Engineering Practices in Agile University Capstones", faculty: "Bautista, R.", authors: "Bautista, R., Cruz, N.", venue: "Journal of Software Engineering Education", year: "2025", classification: "Scopus", type: "Journal", department: "SE", category: "Software", quartile: "Q3", percentile: "40th", details: "Journal of Software Engineering Education\nACM\nvol. 9\npg. 12-30\ndoi: 10.1145/jsee.2025.0009" },
+    { title: "Community-Based IT Adoption in Local Government Units", faculty: "Ramos, S.", authors: "Ramos, S., Villanueva, T.", venue: "Philippine Local Journal of Information Systems", year: "2025", classification: "Refereed", type: "Local Journal", department: "IT", category: "Computer Science Applications", quartile: "", percentile: "", details: "Philippine Local Journal of Information Systems\nPhilippine ICT Society\nvol. 7\npg. 1-15" },
+    { title: "Explainable AI for Academic Early-Warning Systems", faculty: "Mendoza, C.", authors: "Mendoza, C., Dela Cruz, J., Aquino, D.", venue: "Journal of Educational Data Mining", year: "2026", classification: "Scopus", type: "Journal", department: "CS", category: "Computer Vision and Pattern Recognition\nSoftware", quartile: "Q1\nQ2", percentile: "82nd\n60th", details: "Journal of Educational Data Mining\nSpringer\nvol. 18\npg. 200-220\ndoi: 10.1007/jedm.2026.0018" }
   ];
 
   var FIELD_ALIASES = {
@@ -557,6 +557,7 @@
     type: ["type", "publicationtype", "format", "venuetype"],
     department: ["department", "dept", "college", "unit"],
     quartile: ["quartile", "sjrquartile", "highestquartile", "sjr", "quartileranking"],
+    percentile: ["percentile", "percentileranking", "percentilescore", "sjrpercentile"],
     category: ["category", "categories", "subjectarea", "subjectareas", "subject", "subjects", "researcharea", "researchareas", "topic", "topics", "discipline", "disciplines", "asjc", "scopuscategory", "scopuscategories", "fieldofresearch"],
     details: ["completepublicationdetails", "publicationdetails", "fullcitation", "citation", "details"],
     breakdown: ["sjrbibliometricbreakdown", "bibliometricbreakdown", "quartilebreakdown", "categoryquartilepercentile", "subjectareabreakdown", "categorybreakdown", "sjrbreakdown", "quartilecategorybreakdown"]
@@ -564,7 +565,7 @@
   var FIELD_LABELS = {
     title: "Title", faculty: "Faculty", authors: "Authors", venue: "Venue", year: "Year",
     classification: "Classification", type: "Type", department: "Department", quartile: "Quartile",
-    category: "Category", details: "Publication Details", breakdown: "SJR Breakdown"
+    percentile: "Percentile", category: "Category", details: "Publication Details", breakdown: "SJR Breakdown"
   };
 
   function normalizeHeader(h) {
@@ -656,10 +657,18 @@
 
   // Category cells are usually comma- or semicolon-separated subject tags
   // (unlike faculty names, which use "Last, First" so commas can't split there).
+  // Category cells may list multiple subject areas either one-per-line
+  // (the common case: parallel Category/Quartile/Percentile columns) or
+  // semicolon/comma-separated on a single line.
   function splitCategories(cell) {
     if (!cell) return [];
-    var parts = cell.split(/;|,/);
+    var parts = /\r?\n/.test(cell) ? cell.split(/\r?\n/) : cell.split(/;|,/);
     return parts.map(function (p) { return p.trim(); }).filter(Boolean);
+  }
+
+  function splitLines(cell) {
+    if (!cell) return [];
+    return String(cell).split(/\r?\n/).map(function (p) { return p.trim(); }).filter(Boolean);
   }
 
   var QUARTILE_ORDER = ["Q1", "Q2", "Q3", "Q4", "Unranked"];
@@ -667,6 +676,11 @@
   function normalizeQuartile(value) {
     var m = /q\s*([1-4])/i.exec(value || "") || /^\s*([1-4])\s*$/.exec(value || "");
     return m ? "Q" + m[1] : "Unranked";
+  }
+
+  function extractPercentileDigits(value) {
+    var m = /(\d+)/.exec(String(value || ""));
+    return m ? m[1] : "";
   }
 
   function ordinalSuffix(n) {
@@ -681,8 +695,39 @@
     }
   }
 
-  // A publication's SJR breakdown is one "Category, Q#, Top Nth" line per
-  // subject area, usually packed into a single (possibly multi-line) cell.
+  // Real sheets store this as three parallel columns (Category, Quartile,
+  // Percentile), each cell newline-separated with one line per subject area,
+  // aligned by line position. When a publication only has a single quartile
+  // value for multiple categories, that value is reused across all of them.
+  function getCategoryBreakdown(r) {
+    var categories = splitCategories(r.category);
+    if (!categories.length) return [];
+    var quartiles = splitLines(r.quartile);
+    var percentiles = splitLines(r.percentile);
+    return categories.map(function (cat, i) {
+      var q = quartiles.length === categories.length ? quartiles[i] : quartiles[0];
+      var p = percentiles.length === categories.length ? percentiles[i] : percentiles[0];
+      return { category: cat, quartile: normalizeQuartile(q), percentile: extractPercentileDigits(p) };
+    });
+  }
+
+  // The paper's overall "highest" quartile is the best (numerically lowest)
+  // quartile among all of its subject-area breakdowns, not just whichever
+  // line happens to come first in the raw cell.
+  function bestQuartile(r) {
+    var breakdown = getCategoryBreakdown(r);
+    if (!breakdown.length) return normalizeQuartile(r.quartile);
+    var best = null;
+    breakdown.forEach(function (row) {
+      if (row.quartile === "Unranked") return;
+      var n = Number(row.quartile.slice(1));
+      if (best === null || n < best) best = n;
+    });
+    return best === null ? "Unranked" : "Q" + best;
+  }
+
+  // Fallback for sheets that instead pack "Category, Q#, Top Nth" lines into
+  // a single combined column rather than three parallel ones.
   function parseBreakdownRows(text) {
     if (!text) return [];
     var lines = String(text).split(/\r?\n/).map(function (l) { return l.trim(); }).filter(Boolean);
@@ -725,14 +770,6 @@
     var arr = Object.keys(set);
     if (opts.numericYear) {
       arr.sort(function (a, b) { return Number(b) - Number(a); });
-    } else if (opts.quartile) {
-      arr.sort(function (a, b) {
-        var qa = /Q(\d)/i.exec(a), qb = /Q(\d)/i.exec(b);
-        if (qa && qb) return Number(qa[1]) - Number(qb[1]);
-        if (qa) return -1;
-        if (qb) return 1;
-        return a.localeCompare(b);
-      });
     } else {
       arr.sort();
     }
@@ -771,7 +808,7 @@
       if (f.classification && r.classification !== f.classification) return false;
       if (f.type && r.type !== f.type) return false;
       if (f.department && r.department !== f.department) return false;
-      if (f.quartile && r.quartile !== f.quartile) return false;
+      if (f.quartile && bestQuartile(r) !== f.quartile) return false;
       if (f.search) {
         var hay = (r.title + " " + r.faculty + " " + r.venue).toLowerCase();
         if (hay.indexOf(f.search) === -1) return false;
@@ -1107,8 +1144,12 @@
       TABLE_FIELDS.forEach(function (f, idx) {
         var td = document.createElement("td");
         if (idx === 0) td.className = "primary";
-        if (f === "quartile" && r[f]) {
-          td.innerHTML = '<span class="pill">' + escapeHtml(r[f]) + "</span>";
+        if (f === "quartile") {
+          var bq = bestQuartile(r);
+          td.innerHTML = bq === "Unranked" ? "—" : '<span class="pill">' + escapeHtml(bq) + "</span>";
+        } else if (f === "category") {
+          var cats = splitCategories(r[f]);
+          td.textContent = cats.length ? cats.join("; ") : "—";
         } else {
           td.textContent = r[f] || "—";
         }
@@ -1136,7 +1177,8 @@
       classEl.style.display = "none";
     }
 
-    var breakdownRows = parseBreakdownRows(r.breakdown);
+    var breakdownRows = getCategoryBreakdown(r);
+    if (!breakdownRows.length) breakdownRows = parseBreakdownRows(r.breakdown);
     var body = document.getElementById("detail-breakdown-body");
     body.innerHTML = "";
     if (breakdownRows.length) {
@@ -1187,7 +1229,7 @@
     document.getElementById("stat-scopus").textContent = total ? (Math.round((scopusCount / total) * 1000) / 10) + "%" : "–";
     document.getElementById("stat-scopus-sub").textContent = total ? (scopusCount + " Scopus / " + refereedCount + " Refereed") : "No data";
 
-    var q1Count = filtered.filter(function (r) { return /^q1$/i.test((r.quartile || "").trim()); }).length;
+    var q1Count = filtered.filter(function (r) { return bestQuartile(r) === "Q1"; }).length;
     document.getElementById("stat-q1").textContent = total ? (Math.round((q1Count / total) * 1000) / 10) + "%" : "–";
 
     var facultySet = {};
@@ -1224,19 +1266,19 @@
 
     // chart: highest SJR quartile distribution (one slice per paper, fixed semantic colors)
     var quartileCounts = {};
-    filtered.forEach(function (r) { var q = normalizeQuartile(r.quartile); quartileCounts[q] = (quartileCounts[q] || 0) + 1; });
+    filtered.forEach(function (r) { var q = bestQuartile(r); quartileCounts[q] = (quartileCounts[q] || 0) + 1; });
     var quartilePieData = QUARTILE_ORDER.filter(function (q) { return quartileCounts[q]; }).map(function (q) {
       return { label: q, value: quartileCounts[q], colorVar: QUARTILE_COLORS[q] };
     });
     renderDonut(document.getElementById("chart-quartile-pie"), document.getElementById("quartile-pie-legend"), quartilePieData, { innerRatio: 0 });
 
-    // chart: top categories split by quartile (stacked bar; a paper can carry multiple category tags)
+    // chart: top categories split by quartile (stacked bar) — each category
+    // uses its own quartile from the breakdown, not the paper's overall best
     var categoryQuartile = {};
     filtered.forEach(function (r) {
-      var q = normalizeQuartile(r.quartile);
-      splitCategories(r.category).forEach(function (cat) {
-        if (!categoryQuartile[cat]) categoryQuartile[cat] = {};
-        categoryQuartile[cat][q] = (categoryQuartile[cat][q] || 0) + 1;
+      getCategoryBreakdown(r).forEach(function (row) {
+        if (!categoryQuartile[row.category]) categoryQuartile[row.category] = {};
+        categoryQuartile[row.category][row.quartile] = (categoryQuartile[row.category][row.quartile] || 0) + 1;
       });
     });
     var categoryData = Object.keys(categoryQuartile).map(function (cat) {
@@ -1256,7 +1298,10 @@
     populateSelect("f-class", uniqueSorted(ALL_RECORDS, "classification"), "All Classifications");
     populateSelect("f-type", uniqueSorted(ALL_RECORDS, "type"), "All");
     populateSelect("f-dept", uniqueSorted(ALL_RECORDS, "department"), "All");
-    populateSelect("f-quartile", uniqueSorted(ALL_RECORDS, "quartile", { quartile: true }), "All Quartiles");
+    var quartileSet = {};
+    ALL_RECORDS.forEach(function (r) { quartileSet[bestQuartile(r)] = true; });
+    var quartileOptions = QUARTILE_ORDER.filter(function (q) { return quartileSet[q]; });
+    populateSelect("f-quartile", quartileOptions, "All Quartiles");
   }
 
   ["f-search", "f-year", "f-class", "f-type", "f-dept", "f-quartile"].forEach(function (id) {

@@ -60,6 +60,16 @@ that value reused across all of them. Sheets that instead pack
 `"Category, Q#, Top Nth"` lines into one combined column are supported as a
 fallback (`parseBreakdownRows`).
 
+### Publication Type
+
+Some sheets have two different "type" columns — an unrelated one (e.g.
+author/student level: Faculty/Grad/Undergrad/SHS) alongside the actual
+venue-type column ("Publication Type": International Conference, Journal,
+etc.). `FIELD_ALIASES.type` checks `publicationtype`/`typeofpublication`/
+`venuetype` before the bare `type`, so the more specific column wins the
+exact-match check first instead of whichever "Type"-named column happens
+to exist.
+
 ### Department
 
 The Department filter is fixed to the three CCS departments (`DEPARTMENT_OPTIONS`

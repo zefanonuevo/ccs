@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CCS Dashboard</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --text: #1a1d23;
+    --text-dim: #5b616e;
+    --border: #e2e5ea;
+    --accent: #2f6feb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1115;
+      --surface: #171a21;
+      --text: #eaecef;
+      --text-dim: #9aa1ac;
+      --border: #2a2e37;
+      --accent: #6ea8ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .title-block h1 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+  .title-block p {
+    margin: 0.15rem 0 0;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .actions a, .actions button {
+    font: inherit;
+    font-size: 0.85rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .actions .primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  main {
+    flex: 1;
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+  }
+  .sheet-frame {
+    flex: 1;
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+    min-height: 0;
+  }
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  footer {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="title-block">
+      <h1>CCS Dashboard</h1>
+      <p>Live view of the published Google Sheet</p>
+    </div>
+    <div class="actions">
+      <button id="refresh-btn" type="button">Refresh</button>
+      <a class="primary" id="open-link"
+         href="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vRqq9Npar94a_ik99hyFt-meTSh3ziRrsSs9e3XeZ_6tUztFg6X7FG-Ls2jN5Mn_kYdf0j9to1VV2EW/pubhtml"
+         target="_blank" rel="noopener">Open full sheet ↗</a>
+    </div>
+  </header>
+  <main>
+    <div class="sheet-frame">
+      <iframe id="sheet-iframe"
+        src="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vRqq9Npar94a_ik99hyFt-meTSh3ziRrsSs9e3XeZ_6tUztFg6X7FG-Ls2jN5Mn_kYdf0j9to1VV2EW/pubhtml?widget=true&amp;headers=false"
+        loading="lazy"
+        title="Published Google Sheet"></iframe>
+    </div>
+  </main>
+  <footer>
+    Data is served live from Google Sheets (Publish to web). Edits made in the source spreadsheet appear here automatically after Google's periodic republish cycle.
+  </footer>
+  <script>
+    document.getElementById('refresh-btn').addEventListener('click', function () {
+      var frame = document.getElementById('sheet-iframe');
+      var url = new URL(frame.src);
+      url.searchParams.set('_ts', Date.now());
+      frame.src = url.toString();
+    });
+  </script>
+</body>
+</html>

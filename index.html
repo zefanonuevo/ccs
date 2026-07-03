@@ -642,6 +642,11 @@
     return rows.filter(function (r) { return r.length > 1 || (r.length === 1 && r[0] !== ""); });
   }
 
+  // These only feed optional, supplementary parts of the detail modal (which
+  // already falls back gracefully when they're absent), so their absence
+  // isn't worth surfacing as a "couldn't match" warning to the user.
+  var OPTIONAL_FIELDS = ["authors", "details", "breakdown"];
+
   function detectColumns(headerRow) {
     var normalized = headerRow.map(normalizeHeader);
     var map = {}, missing = [];
@@ -658,7 +663,7 @@
           }
         }
       }
-      if (idx === -1) { missing.push(FIELD_LABELS[field]); }
+      if (idx === -1 && OPTIONAL_FIELDS.indexOf(field) === -1) { missing.push(FIELD_LABELS[field]); }
       map[field] = idx;
     });
     return { map: map, missing: missing };

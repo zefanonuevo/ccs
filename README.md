@@ -24,9 +24,10 @@ published to the web.
 
 ## Viewing the dashboard
 
-This is a static site meant to be served with GitHub Pages. See the repo
-settings for the live URL once Pages is enabled (Settings → Pages → Source:
-Deploy from a branch → this branch → `/` root).
+This is a static site served with GitHub Pages:
+https://zefanonuevo.github.io/ccs/
+
+(Settings → Pages → Source: Deploy from a branch → this branch → `/` root.)
 
 ## Column matching
 

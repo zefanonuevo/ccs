@@ -593,7 +593,11 @@
     venue: ["venue", "journal", "journalconference", "journalorconference", "publicationvenue", "conference", "titleofjournalorconference"],
     year: ["year", "publicationyear", "pubyear", "yearpublished"],
     classification: ["classification", "indexation", "scopusrefereed", "indexed", "indextype"],
-    type: ["type", "publicationtype", "format", "venuetype"],
+    // "publicationtype"/"typeofpublication" must be checked before the bare
+    // "type", since some sheets also have an unrelated "Type" column (e.g.
+    // author/student level: Faculty/Grad/Undergrad/SHS) that would otherwise
+    // win the exact-match check first.
+    type: ["publicationtype", "typeofpublication", "venuetype", "formatofpublication", "format", "type"],
     department: ["department", "dept", "college", "unit"],
     quartile: ["quartile", "sjrquartile", "highestquartile", "sjr", "quartileranking"],
     percentile: ["percentile", "percentileranking", "percentilescore", "sjrpercentile"],

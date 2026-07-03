@@ -13,7 +13,7 @@ published to the web.
   - Filters: free-text search plus Publication Year, Classification, Type,
     Department, and Highest Quartile
   - Charts: publications per year (bar), category indexation (donut),
-    publication formats (horizontal bar), publications per faculty
+    publication type (horizontal bar), publications per faculty
     (top 10, horizontal bar), highest SJR quartile distribution (pie,
     fixed Q1-green → Q4-red → Unranked-gray coloring), and top research
     categories split by quartile (stacked bar) — all interactive (hover
@@ -73,4 +73,4 @@ under — every one of those departments when filtering.
 
 Update `SHEET_ID` and `GID` near the top of the `<script>` block in
 `index.html` (visible in the sheet's URL, or in a fetch error if the CSV
-export fails), and `PUB_URL` if the "Publish to web" link changes.
+export fails).

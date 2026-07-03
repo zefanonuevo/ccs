@@ -60,6 +60,15 @@ that value reused across all of them. Sheets that instead pack
 `"Category, Q#, Top Nth"` lines into one combined column are supported as a
 fallback (`parseBreakdownRows`).
 
+### Department
+
+The Department filter is fixed to the three CCS departments (`DEPARTMENT_OPTIONS`
+near `splitDepartments` in `index.html`: `CT`, `IT`, `ST`) rather than
+whatever values happen to appear in the sheet. A publication co-authored by
+faculty from more than one department can list several (e.g. `"CT; IT"`),
+separated by `;`, `,`, `/`, "and", or "&"; it then matches — and appears
+under — every one of those departments when filtering.
+
 ## Pointing at a different sheet or tab
 
 Update `SHEET_ID` and `GID` near the top of the `<script>` block in

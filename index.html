@@ -589,10 +589,10 @@
   var SAMPLE_ROWS = [
     { title: "Investigating the resistome, taxonomic composition, and mobilome of bacterial communities in hospital wastewaters of Metro Manila using a shotgun metagenomics approach", faculty: "Shrestha, Anish", authors: "Jiaan Carlo E. Santos, Daphne Janelyn L. Go, Paul K. Yu, Angelyn R. Lao, Luisa D. Enriquez, Llewelyn M. Espiritu, Anish M.S. Shrestha", venue: "Microbiology Spectrum", year: "2026", classification: "Scopus", type: "Journal", department: "ST", category: "Ecology\nInfectious Diseases\nGeneral Immunology and Microbiology\nPhysiology\nGenetics\nMicrobiology (medical)\nCell Biology", quartile: "Q1\nQ1\nQ1\nQ1\nQ1\nQ1\nQ2", percentile: "88th\n84th\n83rd\n79th\n77th\n77th\n66th", details: "Microbiology Spectrum\nAmerican Society for Microbiology\nvol. 14\niss. 5\npg. 1-17\ndoi: 10.1128/spectrum.03963-25\neid: 2-s2.0-105039441411" },
     { title: "A Survey of Human-Computer Interaction Trends in Higher Education", faculty: "Reyes, A.", authors: "Reyes, A., Dela Cruz, J., Tan, K.", venue: "International Journal of HCI Studies", year: "2024", classification: "Scopus", type: "Journal", department: "IT", category: "Human Computer Interaction", quartile: "Q2", percentile: "55th", details: "International Journal of HCI Studies\nSpringer\nvol. 12\npg. 45-60\ndoi: 10.1007/hci.2024.0012" },
-    { title: "Distributed Systems Resilience Under Network Partition", faculty: "Garcia, L.", authors: "Garcia, L., Lim, P.", venue: "IEEE Intl. Conference on Distributed Computing", year: "2024", classification: "Scopus", type: "International Conference", department: "CS", category: "Computer Networks and Communications\nTheoretical Computer Science", quartile: "Q1\nQ1", percentile: "90th\n85th", details: "IEEE Intl. Conference on Distributed Computing\nIEEE\nart. 118\ndoi: 10.1109/icdc.2024.0118" },
-    { title: "Software Engineering Practices in Agile University Capstones", faculty: "Bautista, R.", authors: "Bautista, R., Cruz, N.", venue: "Journal of Software Engineering Education", year: "2025", classification: "Scopus", type: "Journal", department: "SE", category: "Software", quartile: "Q3", percentile: "40th", details: "Journal of Software Engineering Education\nACM\nvol. 9\npg. 12-30\ndoi: 10.1145/jsee.2025.0009" },
+    { title: "Distributed Systems Resilience Under Network Partition", faculty: "Garcia, L.; Lim, P.", authors: "Garcia, L., Lim, P.", venue: "IEEE Intl. Conference on Distributed Computing", year: "2024", classification: "Scopus", type: "International Conference", department: "CT; IT", category: "Computer Networks and Communications\nTheoretical Computer Science", quartile: "Q1\nQ1", percentile: "90th\n85th", details: "IEEE Intl. Conference on Distributed Computing\nIEEE\nart. 118\ndoi: 10.1109/icdc.2024.0118" },
+    { title: "Software Engineering Practices in Agile University Capstones", faculty: "Bautista, R.", authors: "Bautista, R., Cruz, N.", venue: "Journal of Software Engineering Education", year: "2025", classification: "Scopus", type: "Journal", department: "CT", category: "Software", quartile: "Q3", percentile: "40th", details: "Journal of Software Engineering Education\nACM\nvol. 9\npg. 12-30\ndoi: 10.1145/jsee.2025.0009" },
     { title: "Community-Based IT Adoption in Local Government Units", faculty: "Ramos, S.", authors: "Ramos, S., Villanueva, T.", venue: "Philippine Local Journal of Information Systems", year: "2025", classification: "Refereed", type: "Local Journal", department: "IT", category: "Computer Science Applications", quartile: "", percentile: "", details: "Philippine Local Journal of Information Systems\nPhilippine ICT Society\nvol. 7\npg. 1-15" },
-    { title: "Explainable AI for Academic Early-Warning Systems", faculty: "Mendoza, C.", authors: "Mendoza, C., Dela Cruz, J., Aquino, D.", venue: "Journal of Educational Data Mining", year: "2026", classification: "Scopus", type: "Journal", department: "CS", category: "Computer Vision and Pattern Recognition\nSoftware", quartile: "Q1\nQ2", percentile: "82nd\n60th", details: "Journal of Educational Data Mining\nSpringer\nvol. 18\npg. 200-220\ndoi: 10.1007/jedm.2026.0018" }
+    { title: "Explainable AI for Academic Early-Warning Systems", faculty: "Mendoza, C.", authors: "Mendoza, C., Dela Cruz, J., Aquino, D.", venue: "Journal of Educational Data Mining", year: "2026", classification: "Scopus", type: "Journal", department: "CT", category: "Computer Vision and Pattern Recognition\nSoftware", quartile: "Q1\nQ2", percentile: "82nd\n60th", details: "Journal of Educational Data Mining\nSpringer\nvol. 18\npg. 200-220\ndoi: 10.1007/jedm.2026.0018" }
   ];
 
   var FIELD_ALIASES = {
@@ -703,8 +703,6 @@
     return parts.map(function (p) { return p.trim(); }).filter(Boolean);
   }
 
-  // Category cells are usually comma- or semicolon-separated subject tags
-  // (unlike faculty names, which use "Last, First" so commas can't split there).
   // Category cells may list multiple subject areas either one-per-line
   // (the common case: parallel Category/Quartile/Percentile columns) or
   // semicolon/comma-separated on a single line.
@@ -717,6 +715,17 @@
   function splitLines(cell) {
     if (!cell) return [];
     return String(cell).split(/\r?\n/).map(function (p) { return p.trim(); }).filter(Boolean);
+  }
+
+  // A publication co-authored by faculty from different CCS departments can
+  // list more than one; departments are short codes so semicolon/comma/"&"/
+  // "and" are all safe separators (unlike faculty names, which need commas
+  // reserved for "Last, First").
+  var DEPARTMENT_OPTIONS = ["CT", "IT", "ST"];
+  function splitDepartments(cell) {
+    if (!cell) return [];
+    var parts = cell.split(/[;,/]|\s+&\s+|\s+and\s+/i);
+    return parts.map(function (p) { return p.trim().toUpperCase(); }).filter(Boolean);
   }
 
   var QUARTILE_ORDER = ["Q1", "Q2", "Q3", "Q4", "Unranked"];
@@ -855,7 +864,7 @@
       if (f.year && r.year !== f.year) return false;
       if (f.classification && r.classification !== f.classification) return false;
       if (f.type && r.type !== f.type) return false;
-      if (f.department && r.department !== f.department) return false;
+      if (f.department && splitDepartments(r.department).indexOf(f.department) === -1) return false;
       if (f.quartile && bestQuartile(r) !== f.quartile) return false;
       if (f.search) {
         var hay = (r.title + " " + r.faculty + " " + r.venue).toLowerCase();
@@ -1198,6 +1207,9 @@
         } else if (f === "category") {
           var cats = splitCategories(r[f]);
           td.textContent = cats.length ? cats.join("; ") : "—";
+        } else if (f === "department") {
+          var depts = splitDepartments(r[f]);
+          td.textContent = depts.length ? depts.join("; ") : "—";
         } else {
           td.textContent = r[f] || "—";
         }
@@ -1214,7 +1226,8 @@
     document.getElementById("detail-title").textContent = r.title || "Untitled publication";
     document.getElementById("detail-authors").textContent = r.authors || r.faculty || "—";
     document.getElementById("detail-faculty").textContent = r.faculty || "—";
-    document.getElementById("detail-department").textContent = r.department || "—";
+    var deptList = splitDepartments(r.department);
+    document.getElementById("detail-department").textContent = deptList.length ? deptList.join(", ") : "—";
     document.getElementById("detail-details").textContent = r.details || [r.venue, r.year].filter(Boolean).join("\n") || "—";
 
     var classEl = document.getElementById("detail-classification");
@@ -1345,7 +1358,7 @@
     populateSelect("f-year", uniqueSorted(ALL_RECORDS, "year", { numericYear: true }), "All");
     populateSelect("f-class", uniqueSorted(ALL_RECORDS, "classification"), "All Classifications");
     populateSelect("f-type", uniqueSorted(ALL_RECORDS, "type"), "All");
-    populateSelect("f-dept", uniqueSorted(ALL_RECORDS, "department"), "All");
+    populateSelect("f-dept", DEPARTMENT_OPTIONS, "All");
     var quartileSet = {};
     ALL_RECORDS.forEach(function (r) { quartileSet[bestQuartile(r)] = true; });
     var quartileOptions = QUARTILE_ORDER.filter(function (q) { return quartileSet[q]; });

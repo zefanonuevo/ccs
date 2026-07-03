@@ -179,7 +179,8 @@
   }
   .chart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
   .chart-head h3 { font-size: 0.9rem; font-weight: 700; }
-  .chart-tag { font-size: 0.68rem; color: var(--text-muted); background: var(--page); border: 1px solid var(--border); padding: 0.15rem 0.5rem; border-radius: 999px; }
+  .chart-tag { font-size: 0.68rem; color: var(--text-muted); background: var(--page); border: 1px solid var(--border); padding: 0.15rem 0.5rem; border-radius: 999px; flex: none; }
+  .chart-subtitle { font-size: 0.74rem; color: var(--text-secondary); margin-top: 0.2rem; font-weight: 400; }
   .chart-body { width: 100%; }
   .chart-empty { font-size: 0.8rem; color: var(--text-muted); padding: 2rem 0; text-align: center; }
 
@@ -370,6 +371,29 @@
       </div>
     </div>
 
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-head"><h3>Publications per Faculty</h3><span class="chart-tag">Top 10 Active</span></div>
+        <div class="chart-body" id="chart-faculty"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><h3>Highest SJR Quartile Distribution</h3><span class="chart-tag">Rank Tier</span></div>
+        <div class="chart-body" id="chart-quartile-pie"></div>
+        <div class="legend" id="quartile-pie-legend"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head">
+          <div>
+            <h3>Categories of the Quartiles</h3>
+            <p class="chart-subtitle">Distribution of top categories split by quartile</p>
+          </div>
+          <span class="chart-tag">Topic Quality</span>
+        </div>
+        <div class="chart-body" id="chart-category-quartile"></div>
+        <div class="legend" id="category-quartile-legend"></div>
+      </div>
+    </div>
+
     <div class="table-card">
       <div class="table-head">
         <h3>Publications</h3>
@@ -403,12 +427,12 @@
 
   // ---------- sample fallback data (mirrors expected shape/volume) ----------
   var SAMPLE_ROWS = [
-    { title: "Deep Learning Approaches for Low-Resource Filipino NLP", faculty: "Dela Cruz, J.; Santos, M.", venue: "Journal of Applied Computing", year: "2023", classification: "Scopus", type: "Journal", department: "CS", quartile: "Q1" },
-    { title: "A Survey of Human-Computer Interaction Trends in Higher Education", faculty: "Reyes, A.; Tan, K.", venue: "International Journal of HCI Studies", year: "2024", classification: "Scopus", type: "Journal", department: "IT", quartile: "Q2" },
-    { title: "Distributed Systems Resilience Under Network Partition", faculty: "Garcia, L.; Lim, P.", venue: "IEEE Intl. Conference on Distributed Computing", year: "2024", classification: "Scopus", type: "International Conference", department: "CS", quartile: "Q1" },
-    { title: "Software Engineering Practices in Agile University Capstones", faculty: "Bautista, R.; Cruz, N.", venue: "Journal of Software Engineering Education", year: "2025", classification: "Scopus", type: "Journal", department: "SE", quartile: "Q3" },
-    { title: "Community-Based IT Adoption in Local Government Units", faculty: "Ramos, S.; Villanueva, T.", venue: "Philippine Local Journal of Information Systems", year: "2025", classification: "Refereed", type: "Local Journal", department: "IT", quartile: "" },
-    { title: "Explainable AI for Academic Early-Warning Systems", faculty: "Mendoza, C.; Aquino, D.", venue: "Journal of Educational Data Mining", year: "2026", classification: "Scopus", type: "Journal", department: "CS", quartile: "Q1" }
+    { title: "Deep Learning Approaches for Low-Resource Filipino NLP", faculty: "Dela Cruz, J.; Santos, M.", venue: "Journal of Applied Computing", year: "2023", classification: "Scopus", type: "Journal", department: "CS", quartile: "Q1", category: "Software; Computer Science Applications" },
+    { title: "A Survey of Human-Computer Interaction Trends in Higher Education", faculty: "Reyes, A.; Dela Cruz, J.", venue: "International Journal of HCI Studies", year: "2024", classification: "Scopus", type: "Journal", department: "IT", quartile: "Q2", category: "Human Computer Interaction" },
+    { title: "Distributed Systems Resilience Under Network Partition", faculty: "Garcia, L.; Lim, P.", venue: "IEEE Intl. Conference on Distributed Computing", year: "2024", classification: "Scopus", type: "International Conference", department: "CS", quartile: "Q1", category: "Computer Networks and Communications; Theoretical Computer Science" },
+    { title: "Software Engineering Practices in Agile University Capstones", faculty: "Bautista, R.; Cruz, N.", venue: "Journal of Software Engineering Education", year: "2025", classification: "Scopus", type: "Journal", department: "SE", quartile: "Q3", category: "Software" },
+    { title: "Community-Based IT Adoption in Local Government Units", faculty: "Ramos, S.; Villanueva, T.", venue: "Philippine Local Journal of Information Systems", year: "2025", classification: "Refereed", type: "Local Journal", department: "IT", quartile: "", category: "Computer Science Applications" },
+    { title: "Explainable AI for Academic Early-Warning Systems", faculty: "Mendoza, C.; Dela Cruz, J.", venue: "Journal of Educational Data Mining", year: "2026", classification: "Scopus", type: "Journal", department: "CS", quartile: "Q1", category: "Computer Vision and Pattern Recognition; Software" }
   ];
 
   var FIELD_ALIASES = {
@@ -416,14 +440,16 @@
     faculty: ["faculty", "author", "authors", "facultyname", "facultymembers", "researcher", "researchers", "proponent", "proponents"],
     venue: ["venue", "journal", "journalconference", "journalorconference", "publicationvenue", "conference", "titleofjournalorconference"],
     year: ["year", "publicationyear", "pubyear", "yearpublished"],
-    classification: ["classification", "category", "indexation", "scopusrefereed", "indexed"],
+    classification: ["classification", "indexation", "scopusrefereed", "indexed", "indextype"],
     type: ["type", "publicationtype", "format", "venuetype"],
     department: ["department", "dept", "college", "unit"],
-    quartile: ["quartile", "sjrquartile", "highestquartile", "sjr", "quartileranking"]
+    quartile: ["quartile", "sjrquartile", "highestquartile", "sjr", "quartileranking"],
+    category: ["category", "categories", "subjectarea", "subjectareas", "subject", "subjects", "researcharea", "researchareas", "topic", "topics", "discipline", "disciplines", "asjc", "scopuscategory", "scopuscategories", "fieldofresearch"]
   };
   var FIELD_LABELS = {
     title: "Title", faculty: "Faculty", venue: "Venue", year: "Year",
-    classification: "Classification", type: "Type", department: "Department", quartile: "Quartile"
+    classification: "Classification", type: "Type", department: "Department", quartile: "Quartile",
+    category: "Category"
   };
 
   function normalizeHeader(h) {
@@ -511,6 +537,21 @@
     if (!cell) return [];
     var parts = cell.split(/;|(?:\s+&\s+)|(?:\s+and\s+)/i);
     return parts.map(function (p) { return p.trim(); }).filter(Boolean);
+  }
+
+  // Category cells are usually comma- or semicolon-separated subject tags
+  // (unlike faculty names, which use "Last, First" so commas can't split there).
+  function splitCategories(cell) {
+    if (!cell) return [];
+    var parts = cell.split(/;|,/);
+    return parts.map(function (p) { return p.trim(); }).filter(Boolean);
+  }
+
+  var QUARTILE_ORDER = ["Q1", "Q2", "Q3", "Q4", "Unranked"];
+  var QUARTILE_COLORS = { Q1: "--good", Q2: "--series-1", Q3: "--warning", Q4: "--critical", Unranked: "--text-muted" };
+  function normalizeQuartile(value) {
+    var m = /q\s*([1-4])/i.exec(value || "") || /^\s*([1-4])\s*$/.exec(value || "");
+    return m ? "Q" + m[1] : "Unranked";
   }
 
   // ---------- state ----------
@@ -718,7 +759,9 @@
     return el;
   }
 
-  function renderDonut(container, legendEl, data) {
+  function renderDonut(container, legendEl, data, opts) {
+    opts = opts || {};
+    var innerRatio = opts.innerRatio === undefined ? 0.6 : opts.innerRatio;
     container.innerHTML = "";
     legendEl.innerHTML = "";
     var total = data.reduce(function (s, d) { return s + d.value; }, 0);
@@ -727,7 +770,7 @@
     var height = 220;
     var cx = (container.clientWidth || size) / 2, cy = height / 2;
     var rOuter = Math.min(cx, cy) - 10;
-    var rInner = rOuter * 0.6;
+    var rInner = rOuter * innerRatio;
     var svg = svgEl("svg", { width: container.clientWidth || size, height: height, viewBox: "0 0 " + (container.clientWidth || size) + " " + height, style: "display:block" });
 
     var angle = -Math.PI / 2;
@@ -749,12 +792,14 @@
       angle += frac * (Math.PI * 2);
     });
 
-    var centerText = svgEl("text", { x: cx, y: cy - 4, "text-anchor": "middle", fill: cssVar("--text-primary"), "font-size": 20, "font-weight": 700, "font-family": "system-ui, sans-serif" });
-    centerText.textContent = total;
-    svg.appendChild(centerText);
-    var centerSub = svgEl("text", { x: cx, y: cy + 14, "text-anchor": "middle", fill: cssVar("--text-muted"), "font-size": 10.5, "font-family": "system-ui, sans-serif" });
-    centerSub.textContent = "total";
-    svg.appendChild(centerSub);
+    if (rInner > 0) {
+      var centerText = svgEl("text", { x: cx, y: cy - 4, "text-anchor": "middle", fill: cssVar("--text-primary"), "font-size": 20, "font-weight": 700, "font-family": "system-ui, sans-serif" });
+      centerText.textContent = total;
+      svg.appendChild(centerText);
+      var centerSub = svgEl("text", { x: cx, y: cy + 14, "text-anchor": "middle", fill: cssVar("--text-muted"), "font-size": 10.5, "font-family": "system-ui, sans-serif" });
+      centerSub.textContent = "total";
+      svg.appendChild(centerSub);
+    }
 
     container.appendChild(svg);
 
@@ -770,9 +815,17 @@
   function donutSlicePath(cx, cy, rInner, rOuter, a0, a1) {
     var x0o = cx + rOuter * Math.cos(a0), y0o = cy + rOuter * Math.sin(a0);
     var x1o = cx + rOuter * Math.cos(a1), y1o = cy + rOuter * Math.sin(a1);
+    var largeArc = (a1 - a0) > Math.PI ? 1 : 0;
+    if (rInner <= 0) {
+      return [
+        "M", cx, cy,
+        "L", x0o, y0o,
+        "A", rOuter, rOuter, 0, largeArc, 1, x1o, y1o,
+        "Z"
+      ].join(" ");
+    }
     var x1i = cx + rInner * Math.cos(a1), y1i = cy + rInner * Math.sin(a1);
     var x0i = cx + rInner * Math.cos(a0), y0i = cy + rInner * Math.sin(a0);
-    var largeArc = (a1 - a0) > Math.PI ? 1 : 0;
     return [
       "M", x0o, y0o,
       "A", rOuter, rOuter, 0, largeArc, 1, x1o, y1o,
@@ -782,8 +835,87 @@
     ].join(" ");
   }
 
+  // stacked vertical bar chart, e.g. category totals split into quartile segments
+  function renderStackedBarChart(container, legendEl, data, order, colorMap) {
+    container.innerHTML = "";
+    legendEl.innerHTML = "";
+    if (!data.length) { renderEmpty(container, "No data for current filters"); return; }
+    var width = container.clientWidth || 320;
+    var height = 280;
+    var padding = { top: 18, right: 10, bottom: 84, left: 34 };
+    var plotW = width - padding.left - padding.right;
+    var plotH = height - padding.top - padding.bottom;
+    var maxVal = Math.max.apply(null, data.map(function (d) { return d.total; })) || 1;
+    var tickStep = Math.max(1, niceStep(maxVal / 4 || 1));
+    var niceMax = Math.ceil(maxVal / tickStep) * tickStep;
+    var stepCount = Math.round(niceMax / tickStep);
+    var gridline = cssVar("--gridline");
+    var muted = cssVar("--text-muted");
+    var baseline = cssVar("--baseline");
+    var primary = cssVar("--text-primary");
+
+    var svg = svgEl("svg", { width: width, height: height, viewBox: "0 0 " + width + " " + height, style: "overflow:visible;display:block" });
+
+    for (var s = 0; s <= stepCount; s++) {
+      var v = tickStep * s;
+      var gy = height - padding.bottom - (v / niceMax) * plotH;
+      svg.appendChild(svgEl("line", { x1: padding.left, x2: width - padding.right, y1: gy, y2: gy, stroke: gridline, "stroke-width": 1 }));
+      svg.appendChild(labelText(padding.left - 8, gy + 3, Math.round(v), muted, "end"));
+    }
+
+    var n = data.length;
+    var band = plotW / n;
+    var thickness = Math.min(24, band * 0.6);
+    var gap = 2;
+
+    data.forEach(function (d, i) {
+      var x0 = padding.left + i * band + (band - thickness) / 2;
+      var yCursor = height - padding.bottom;
+      order.forEach(function (key) {
+        var val = d.segs[key] || 0;
+        if (!val) return;
+        var h = (val / niceMax) * plotH;
+        var rect = svgEl("rect", {
+          x: x0, y: yCursor - h, width: thickness, height: Math.max(h - gap, 0),
+          rx: 3, ry: 3, fill: cssVar(colorMap[key])
+        });
+        rect.style.cursor = "pointer";
+        rect.addEventListener("mousemove", function (ev) {
+          rect.setAttribute("opacity", "0.82");
+          showTooltip(ev.clientX, ev.clientY, "<strong>" + d.label + "</strong><br/>" + key + ": " + val);
+        });
+        rect.addEventListener("mouseleave", function () { rect.setAttribute("opacity", "1"); hideTooltip(); });
+        svg.appendChild(rect);
+        yCursor -= h;
+      });
+
+      var labelX = x0 + thickness / 2;
+      var labelY = height - padding.bottom + 14;
+      var text = svgEl("text", {
+        x: labelX, y: labelY, fill: muted, "text-anchor": "end", "font-size": 10,
+        "font-family": "system-ui, sans-serif", transform: "rotate(-40 " + labelX + " " + labelY + ")"
+      });
+      text.textContent = d.label;
+      svg.appendChild(text);
+      svg.appendChild(labelText(labelX, height - padding.bottom - (d.total / niceMax) * plotH - 6, d.total, primary, "middle", true));
+    });
+
+    svg.appendChild(svgEl("line", { x1: padding.left, x2: width - padding.right, y1: height - padding.bottom, y2: height - padding.bottom, stroke: baseline, "stroke-width": 1 }));
+
+    container.appendChild(svg);
+
+    order.forEach(function (key) {
+      var hasAny = data.some(function (d) { return (d.segs[key] || 0) > 0; });
+      if (!hasAny) return;
+      var item = document.createElement("div");
+      item.className = "legend-item";
+      item.innerHTML = '<span class="legend-swatch" style="background:' + cssVar(colorMap[key]) + '"></span>' + key;
+      legendEl.appendChild(item);
+    });
+  }
+
   // ---------- table ----------
-  var TABLE_FIELDS = ["title", "faculty", "venue", "year", "classification", "type", "department", "quartile"];
+  var TABLE_FIELDS = ["title", "faculty", "venue", "year", "classification", "type", "department", "quartile", "category"];
 
   function renderTable(records, missing) {
     var head = document.getElementById("table-head-row");
@@ -863,6 +995,37 @@
     var typeData = Object.keys(typeCounts).map(function (k) { return { label: k, value: typeCounts[k] }; })
       .sort(function (a, b) { return b.value - a.value; });
     renderBarChart(document.getElementById("chart-type"), typeData, "--series-5", { horizontal: true, height: Math.max(160, typeData.length * 52) });
+
+    // chart: publications per faculty (top 10 most active)
+    var facultyCounts = {};
+    filtered.forEach(function (r) { splitFaculty(r.faculty).forEach(function (name) { facultyCounts[name] = (facultyCounts[name] || 0) + 1; }); });
+    var facultyData = Object.keys(facultyCounts).map(function (k) { return { label: k, value: facultyCounts[k] }; })
+      .sort(function (a, b) { return b.value - a.value; }).slice(0, 10);
+    renderBarChart(document.getElementById("chart-faculty"), facultyData, "--series-1", { horizontal: true, height: Math.max(160, facultyData.length * 32) });
+
+    // chart: highest SJR quartile distribution (one slice per paper, fixed semantic colors)
+    var quartileCounts = {};
+    filtered.forEach(function (r) { var q = normalizeQuartile(r.quartile); quartileCounts[q] = (quartileCounts[q] || 0) + 1; });
+    var quartilePieData = QUARTILE_ORDER.filter(function (q) { return quartileCounts[q]; }).map(function (q) {
+      return { label: q, value: quartileCounts[q], colorVar: QUARTILE_COLORS[q] };
+    });
+    renderDonut(document.getElementById("chart-quartile-pie"), document.getElementById("quartile-pie-legend"), quartilePieData, { innerRatio: 0 });
+
+    // chart: top categories split by quartile (stacked bar; a paper can carry multiple category tags)
+    var categoryQuartile = {};
+    filtered.forEach(function (r) {
+      var q = normalizeQuartile(r.quartile);
+      splitCategories(r.category).forEach(function (cat) {
+        if (!categoryQuartile[cat]) categoryQuartile[cat] = {};
+        categoryQuartile[cat][q] = (categoryQuartile[cat][q] || 0) + 1;
+      });
+    });
+    var categoryData = Object.keys(categoryQuartile).map(function (cat) {
+      var segs = categoryQuartile[cat];
+      var catTotal = QUARTILE_ORDER.reduce(function (s, q) { return s + (segs[q] || 0); }, 0);
+      return { label: cat, total: catTotal, segs: segs };
+    }).sort(function (a, b) { return b.total - a.total; }).slice(0, 8);
+    renderStackedBarChart(document.getElementById("chart-category-quartile"), document.getElementById("category-quartile-legend"), categoryData, QUARTILE_ORDER, QUARTILE_COLORS);
 
     renderTable(filtered, currentMissing);
   }

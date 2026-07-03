@@ -247,6 +247,73 @@
 
   footer { text-align: center; font-size: 0.72rem; color: var(--text-muted); padding: 1rem 1.5rem 1.5rem; }
   a.src-link { color: inherit; }
+
+  tbody tr.clickable-row { cursor: pointer; }
+  tbody tr.clickable-row:hover { background: var(--page); }
+
+  .modal-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 4vh 1rem;
+    overflow-y: auto;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal-card {
+    position: relative;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    max-width: 640px;
+    width: 100%;
+    padding: 1.5rem 1.75rem 1.75rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  }
+  .modal-close {
+    position: absolute; top: 0.9rem; right: 0.9rem;
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--page); color: var(--text-primary);
+    font-size: 1.1rem; line-height: 1;
+    cursor: pointer;
+  }
+  .modal-class-pill { margin-bottom: 0.75rem; }
+  .modal-section { margin-bottom: 1.1rem; }
+  .modal-field-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; }
+  .modal-title { font-size: 1.1rem; font-weight: 700; line-height: 1.35; margin: 0; }
+  .modal-text { font-size: 0.88rem; color: var(--text-secondary); margin: 0; }
+  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.1rem; }
+  .modal-details-box {
+    background: var(--page);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 0.9rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    white-space: pre-line;
+    font-family: inherit;
+    margin: 0;
+  }
+  .modal-breakdown-scroll { max-height: 240px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .modal-breakdown-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .modal-breakdown-table thead th {
+    position: sticky; top: 0;
+    background: var(--page);
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-breakdown-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--gridline); color: var(--text-secondary); }
+  .modal-breakdown-table tr:last-child td { border-bottom: none; }
+  .modal-breakdown-table .percentile-link { color: var(--series-1); font-weight: 600; }
+  .modal-empty { font-size: 0.82rem; color: var(--text-muted); padding: 0.5rem 0; }
 </style>
 </head>
 <body>
@@ -414,6 +481,51 @@
 
   <div class="tooltip" id="tooltip"></div>
 
+  <div class="modal-backdrop" id="detail-backdrop">
+    <div class="modal-card" id="detail-card" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+      <button class="modal-close" id="detail-close" type="button" aria-label="Close">&times;</button>
+      <span class="pill modal-class-pill" id="detail-classification"></span>
+
+      <div class="modal-section">
+        <div class="modal-field-label">1. Title of the Publication</div>
+        <h2 class="modal-title" id="detail-title"></h2>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-field-label">2. Complete List of Authors</div>
+        <p class="modal-text" id="detail-authors"></p>
+      </div>
+
+      <div class="modal-grid">
+        <div class="modal-section">
+          <div class="modal-field-label">3. Faculty Member(s)</div>
+          <p class="modal-text" id="detail-faculty"></p>
+        </div>
+        <div class="modal-section">
+          <div class="modal-field-label">4. Department (Dept)</div>
+          <p class="modal-text" id="detail-department"></p>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-field-label">5. Complete Publication Details</div>
+        <pre class="modal-details-box" id="detail-details"></pre>
+      </div>
+
+      <div class="modal-section" id="detail-breakdown-section">
+        <div class="modal-field-label">SJR Bibliometric Breakdown</div>
+        <div class="modal-breakdown-scroll">
+          <table class="modal-breakdown-table">
+            <thead>
+              <tr><th>Quartile Category</th><th>Quartile</th><th>Percentile</th></tr>
+            </thead>
+            <tbody id="detail-breakdown-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
 (function () {
   "use strict";
@@ -427,29 +539,32 @@
 
   // ---------- sample fallback data (mirrors expected shape/volume) ----------
   var SAMPLE_ROWS = [
-    { title: "Deep Learning Approaches for Low-Resource Filipino NLP", faculty: "Dela Cruz, J.; Santos, M.", venue: "Journal of Applied Computing", year: "2023", classification: "Scopus", type: "Journal", department: "CS", quartile: "Q1", category: "Software; Computer Science Applications" },
-    { title: "A Survey of Human-Computer Interaction Trends in Higher Education", faculty: "Reyes, A.; Dela Cruz, J.", venue: "International Journal of HCI Studies", year: "2024", classification: "Scopus", type: "Journal", department: "IT", quartile: "Q2", category: "Human Computer Interaction" },
-    { title: "Distributed Systems Resilience Under Network Partition", faculty: "Garcia, L.; Lim, P.", venue: "IEEE Intl. Conference on Distributed Computing", year: "2024", classification: "Scopus", type: "International Conference", department: "CS", quartile: "Q1", category: "Computer Networks and Communications; Theoretical Computer Science" },
-    { title: "Software Engineering Practices in Agile University Capstones", faculty: "Bautista, R.; Cruz, N.", venue: "Journal of Software Engineering Education", year: "2025", classification: "Scopus", type: "Journal", department: "SE", quartile: "Q3", category: "Software" },
-    { title: "Community-Based IT Adoption in Local Government Units", faculty: "Ramos, S.; Villanueva, T.", venue: "Philippine Local Journal of Information Systems", year: "2025", classification: "Refereed", type: "Local Journal", department: "IT", quartile: "", category: "Computer Science Applications" },
-    { title: "Explainable AI for Academic Early-Warning Systems", faculty: "Mendoza, C.; Dela Cruz, J.", venue: "Journal of Educational Data Mining", year: "2026", classification: "Scopus", type: "Journal", department: "CS", quartile: "Q1", category: "Computer Vision and Pattern Recognition; Software" }
+    { title: "Investigating the resistome, taxonomic composition, and mobilome of bacterial communities in hospital wastewaters of Metro Manila using a shotgun metagenomics approach", faculty: "Shrestha, Anish", authors: "Jiaan Carlo E. Santos, Daphne Janelyn L. Go, Paul K. Yu, Angelyn R. Lao, Luisa D. Enriquez, Llewelyn M. Espiritu, Anish M.S. Shrestha", venue: "Microbiology Spectrum", year: "2026", classification: "Scopus", type: "Journal", department: "ST", quartile: "Q1", category: "Ecology; Infectious Diseases; General Immunology and Microbiology; Physiology; Genetics; Microbiology (medical); Cell Biology", details: "Microbiology Spectrum\nAmerican Society for Microbiology\nvol. 14\niss. 5\npg. 1-17\ndoi: 10.1128/spectrum.03963-25\neid: 2-s2.0-105039441411", breakdown: "Ecology, Q1, Top 88th\nInfectious Diseases, Q1, Top 84th\nGeneral Immunology and Microbiology, Q1, Top 83rd\nPhysiology, Q1, Top 79th\nGenetics, Q1, Top 77th\nMicrobiology (medical), Q1, Top 77th\nCell Biology, Q2, Top 66th" },
+    { title: "A Survey of Human-Computer Interaction Trends in Higher Education", faculty: "Reyes, A.", authors: "Reyes, A., Dela Cruz, J., Tan, K.", venue: "International Journal of HCI Studies", year: "2024", classification: "Scopus", type: "Journal", department: "IT", quartile: "Q2", category: "Human Computer Interaction", details: "International Journal of HCI Studies\nSpringer\nvol. 12\npg. 45-60\ndoi: 10.1007/hci.2024.0012", breakdown: "Human Computer Interaction, Q2, Top 55th" },
+    { title: "Distributed Systems Resilience Under Network Partition", faculty: "Garcia, L.", authors: "Garcia, L., Lim, P.", venue: "IEEE Intl. Conference on Distributed Computing", year: "2024", classification: "Scopus", type: "International Conference", department: "CS", quartile: "Q1", category: "Computer Networks and Communications; Theoretical Computer Science", details: "IEEE Intl. Conference on Distributed Computing\nIEEE\nart. 118\ndoi: 10.1109/icdc.2024.0118", breakdown: "Computer Networks and Communications, Q1, Top 90th\nTheoretical Computer Science, Q1, Top 85th" },
+    { title: "Software Engineering Practices in Agile University Capstones", faculty: "Bautista, R.", authors: "Bautista, R., Cruz, N.", venue: "Journal of Software Engineering Education", year: "2025", classification: "Scopus", type: "Journal", department: "SE", quartile: "Q3", category: "Software", details: "Journal of Software Engineering Education\nACM\nvol. 9\npg. 12-30\ndoi: 10.1145/jsee.2025.0009", breakdown: "Software, Q3, Top 40th" },
+    { title: "Community-Based IT Adoption in Local Government Units", faculty: "Ramos, S.", authors: "Ramos, S., Villanueva, T.", venue: "Philippine Local Journal of Information Systems", year: "2025", classification: "Refereed", type: "Local Journal", department: "IT", quartile: "", category: "Computer Science Applications", details: "Philippine Local Journal of Information Systems\nPhilippine ICT Society\nvol. 7\npg. 1-15", breakdown: "" },
+    { title: "Explainable AI for Academic Early-Warning Systems", faculty: "Mendoza, C.", authors: "Mendoza, C., Dela Cruz, J., Aquino, D.", venue: "Journal of Educational Data Mining", year: "2026", classification: "Scopus", type: "Journal", department: "CS", quartile: "Q1", category: "Computer Vision and Pattern Recognition; Software", details: "Journal of Educational Data Mining\nSpringer\nvol. 18\npg. 200-220\ndoi: 10.1007/jedm.2026.0018", breakdown: "Computer Vision and Pattern Recognition, Q1, Top 82nd\nSoftware, Q2, Top 60th" }
   ];
 
   var FIELD_ALIASES = {
     title: ["title", "publicationtitle", "papertitle", "titleofpaper"],
-    faculty: ["faculty", "author", "authors", "facultyname", "facultymembers", "researcher", "researchers", "proponent", "proponents"],
+    faculty: ["faculty", "facultyname", "facultymembers", "researcher", "researchers", "proponent", "proponents", "author", "authors"],
+    authors: ["completelistofauthors", "listofauthors", "allauthors", "coauthors", "authorlist", "authors", "author"],
     venue: ["venue", "journal", "journalconference", "journalorconference", "publicationvenue", "conference", "titleofjournalorconference"],
     year: ["year", "publicationyear", "pubyear", "yearpublished"],
     classification: ["classification", "indexation", "scopusrefereed", "indexed", "indextype"],
     type: ["type", "publicationtype", "format", "venuetype"],
     department: ["department", "dept", "college", "unit"],
     quartile: ["quartile", "sjrquartile", "highestquartile", "sjr", "quartileranking"],
-    category: ["category", "categories", "subjectarea", "subjectareas", "subject", "subjects", "researcharea", "researchareas", "topic", "topics", "discipline", "disciplines", "asjc", "scopuscategory", "scopuscategories", "fieldofresearch"]
+    category: ["category", "categories", "subjectarea", "subjectareas", "subject", "subjects", "researcharea", "researchareas", "topic", "topics", "discipline", "disciplines", "asjc", "scopuscategory", "scopuscategories", "fieldofresearch"],
+    details: ["completepublicationdetails", "publicationdetails", "fullcitation", "citation", "details"],
+    breakdown: ["sjrbibliometricbreakdown", "bibliometricbreakdown", "quartilebreakdown", "categoryquartilepercentile", "subjectareabreakdown", "categorybreakdown", "sjrbreakdown", "quartilecategorybreakdown"]
   };
   var FIELD_LABELS = {
-    title: "Title", faculty: "Faculty", venue: "Venue", year: "Year",
+    title: "Title", faculty: "Faculty", authors: "Authors", venue: "Venue", year: "Year",
     classification: "Classification", type: "Type", department: "Department", quartile: "Quartile",
-    category: "Category"
+    category: "Category", details: "Publication Details", breakdown: "SJR Breakdown"
   };
 
   function normalizeHeader(h) {
@@ -552,6 +667,33 @@
   function normalizeQuartile(value) {
     var m = /q\s*([1-4])/i.exec(value || "") || /^\s*([1-4])\s*$/.exec(value || "");
     return m ? "Q" + m[1] : "Unranked";
+  }
+
+  function ordinalSuffix(n) {
+    var num = parseInt(n, 10);
+    var mod100 = num % 100;
+    if (mod100 >= 11 && mod100 <= 13) return "th";
+    switch (num % 10) {
+      case 1: return "st";
+      case 2: return "nd";
+      case 3: return "rd";
+      default: return "th";
+    }
+  }
+
+  // A publication's SJR breakdown is one "Category, Q#, Top Nth" line per
+  // subject area, usually packed into a single (possibly multi-line) cell.
+  function parseBreakdownRows(text) {
+    if (!text) return [];
+    var lines = String(text).split(/\r?\n/).map(function (l) { return l.trim(); }).filter(Boolean);
+    var rows = [];
+    lines.forEach(function (line) {
+      var m = /^(.+?)[\s,;|\t]+\(?\s*(Q[1-4])\s*\)?[\s,;|\t]+(?:top\s*)?~?\s*(\d+)(?:st|nd|rd|th)?\s*%?$/i.exec(line);
+      if (m) {
+        rows.push({ category: m[1].replace(/[,;|\s]+$/, "").trim(), quartile: m[2].toUpperCase(), percentile: m[3] });
+      }
+    });
+    return rows;
   }
 
   // ---------- state ----------
@@ -958,6 +1100,10 @@
     var frag = document.createDocumentFragment();
     records.forEach(function (r) {
       var row = document.createElement("tr");
+      row.className = "clickable-row";
+      row.tabIndex = 0;
+      row.addEventListener("click", function () { openDetailModal(r); });
+      row.addEventListener("keydown", function (ev) { if (ev.key === "Enter") openDetailModal(r); });
       TABLE_FIELDS.forEach(function (f, idx) {
         var td = document.createElement("td");
         if (idx === 0) td.className = "primary";
@@ -973,6 +1119,54 @@
     body.appendChild(frag);
     document.getElementById("table-count").textContent = records.length + (records.length === 1 ? " row" : " rows");
   }
+
+  // ---------- publication detail modal ----------
+  function openDetailModal(r) {
+    document.getElementById("detail-title").textContent = r.title || "Untitled publication";
+    document.getElementById("detail-authors").textContent = r.authors || r.faculty || "—";
+    document.getElementById("detail-faculty").textContent = r.faculty || "—";
+    document.getElementById("detail-department").textContent = r.department || "—";
+    document.getElementById("detail-details").textContent = r.details || [r.venue, r.year].filter(Boolean).join("\n") || "—";
+
+    var classEl = document.getElementById("detail-classification");
+    if (r.classification) {
+      classEl.textContent = r.classification;
+      classEl.style.display = "inline-block";
+    } else {
+      classEl.style.display = "none";
+    }
+
+    var breakdownRows = parseBreakdownRows(r.breakdown);
+    var body = document.getElementById("detail-breakdown-body");
+    body.innerHTML = "";
+    if (breakdownRows.length) {
+      breakdownRows.forEach(function (row) {
+        var tr = document.createElement("tr");
+        var pillColor = cssVar(QUARTILE_COLORS[row.quartile] || "--text-muted");
+        tr.innerHTML =
+          "<td>" + escapeHtml(row.category) + "</td>" +
+          '<td><span class="pill" style="border-color:' + pillColor + ';color:' + pillColor + '">' + escapeHtml(row.quartile) + "</span></td>" +
+          '<td class="percentile-link">Top ' + escapeHtml(row.percentile) + ordinalSuffix(row.percentile) + "</td>";
+        body.appendChild(tr);
+      });
+    } else {
+      var tr = document.createElement("tr");
+      tr.innerHTML = '<td colspan="3" class="modal-empty">No SJR breakdown data available for this publication.</td>';
+      body.appendChild(tr);
+    }
+
+    document.getElementById("detail-backdrop").classList.add("show");
+  }
+  function closeDetailModal() {
+    document.getElementById("detail-backdrop").classList.remove("show");
+  }
+  document.getElementById("detail-close").addEventListener("click", closeDetailModal);
+  document.getElementById("detail-backdrop").addEventListener("click", function (ev) {
+    if (ev.target === document.getElementById("detail-backdrop")) closeDetailModal();
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") closeDetailModal();
+  });
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, function (c) {

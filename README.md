@@ -18,7 +18,10 @@ published to the web.
     fixed Q1-green → Q4-red → Unranked-gray coloring), and top research
     categories split by quartile (stacked bar) — all interactive (hover
     tooltips, react live to filters)
-  - A filtered, searchable publications table
+  - A filtered, searchable publications table — click any row to open a
+    detail spec sheet (full title, complete author list, faculty,
+    department, full citation details, and a per-subject-area SJR
+    quartile/percentile breakdown)
   - Light/dark theme (follows system preference, with a manual toggle)
 
   If the live fetch fails (e.g. CORS, offline, or the sheet becomes

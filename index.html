@@ -181,7 +181,7 @@
   .chart-head h3 { font-size: 0.9rem; font-weight: 700; }
   .chart-tag { font-size: 0.68rem; color: var(--text-muted); background: var(--page); border: 1px solid var(--border); padding: 0.15rem 0.5rem; border-radius: 999px; flex: none; }
   .chart-subtitle { font-size: 0.74rem; color: var(--text-secondary); margin-top: 0.2rem; font-weight: 400; }
-  .chart-body { width: 100%; }
+  .chart-body { width: 100%; overflow: hidden; }
   .chart-empty { font-size: 0.8rem; color: var(--text-muted); padding: 2rem 0; text-align: center; }
 
   .legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; margin-top: 0.6rem; font-size: 0.78rem; color: var(--text-secondary); }
@@ -667,6 +667,22 @@
     return niceFraction * Math.pow(10, exponent);
   }
 
+  var measureCtx = document.createElement("canvas").getContext("2d");
+  function textWidth(text, fontSize) {
+    measureCtx.font = fontSize + "px system-ui, -apple-system, sans-serif";
+    return measureCtx.measureText(text).width;
+  }
+  // Axis/category labels get an ellipsis instead of running past their
+  // allotted space and bleeding into whatever sits below the chart.
+  function truncateLabel(text, maxWidthPx, fontSize) {
+    if (textWidth(text, fontSize) <= maxWidthPx) return text;
+    var t = text;
+    while (t.length > 1 && textWidth(t + "…", fontSize) > maxWidthPx) {
+      t = t.slice(0, -1);
+    }
+    return t + "…";
+  }
+
   // vertical / horizontal single-hue bar chart
   function renderBarChart(container, data, colorVar, opts) {
     opts = opts || {};
@@ -719,7 +735,8 @@
           rx: 4, ry: 4, fill: color
         });
         group.appendChild(rect);
-        group.appendChild(labelText(padding.left - 8, y0 + thickness / 2 + 4, d.label, muted, "end"));
+        var rowLabel = truncateLabel(String(d.label), padding.left - 14, 10.5);
+        group.appendChild(labelText(padding.left - 8, y0 + thickness / 2 + 4, rowLabel, muted, "end"));
         group.appendChild(labelText(padding.left + w + 6, y0 + thickness / 2 + 4, d.value, primary, "start", true));
       } else {
         var x0 = padding.left + i * band + (band - thickness) / 2;
@@ -841,10 +858,18 @@
     legendEl.innerHTML = "";
     if (!data.length) { renderEmpty(container, "No data for current filters"); return; }
     var width = container.clientWidth || 320;
-    var height = 280;
-    var padding = { top: 18, right: 10, bottom: 84, left: 34 };
+    var rotDeg = 40;
+    var labelFontSize = 10;
+    var maxLabelPx = 110; // cap on rendered (unrotated) label width; longer labels get an ellipsis
+    // Bottom padding is sized to fully contain the rotated label at its capped
+    // width, so it can never bleed past the chart's own box into the legend/table below.
+    var padding = {
+      top: 18, right: 10, left: 34,
+      bottom: Math.ceil(14 + maxLabelPx * Math.sin(rotDeg * Math.PI / 180) + 10)
+    };
+    var plotH = 190;
+    var height = padding.top + plotH + padding.bottom;
     var plotW = width - padding.left - padding.right;
-    var plotH = height - padding.top - padding.bottom;
     var maxVal = Math.max.apply(null, data.map(function (d) { return d.total; })) || 1;
     var tickStep = Math.max(1, niceStep(maxVal / 4 || 1));
     var niceMax = Math.ceil(maxVal / tickStep) * tickStep;
@@ -892,10 +917,10 @@
       var labelX = x0 + thickness / 2;
       var labelY = height - padding.bottom + 14;
       var text = svgEl("text", {
-        x: labelX, y: labelY, fill: muted, "text-anchor": "end", "font-size": 10,
-        "font-family": "system-ui, sans-serif", transform: "rotate(-40 " + labelX + " " + labelY + ")"
+        x: labelX, y: labelY, fill: muted, "text-anchor": "end", "font-size": labelFontSize,
+        "font-family": "system-ui, sans-serif", transform: "rotate(-" + rotDeg + " " + labelX + " " + labelY + ")"
       });
-      text.textContent = d.label;
+      text.textContent = truncateLabel(String(d.label), maxLabelPx, labelFontSize);
       svg.appendChild(text);
       svg.appendChild(labelText(labelX, height - padding.bottom - (d.total / niceMax) * plotH - 6, d.total, primary, "middle", true));
     });

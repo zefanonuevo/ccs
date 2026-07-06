@@ -14,7 +14,8 @@ published to the web.
     Department, and Highest Quartile — each a checkbox multi-select dropdown
     (not a native `<select>`), so multiple values can be picked at once
     within a field (OR'd together); different fields still AND together
-  - Charts: publications per year (bar), category indexation (donut),
+  - Charts: publications per year (line, area wash under the trend, peak
+    and endpoint value labels), category indexation (donut),
     publication type (horizontal bar), publications per faculty
     (top 10, horizontal bar), highest SJR quartile distribution (pie,
     fixed Q1-green → Q4-red → Unranked-gray coloring), and top research

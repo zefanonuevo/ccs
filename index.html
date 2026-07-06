@@ -819,7 +819,7 @@
   var DEPARTMENT_OPTIONS = ["CT", "IT", "ST"];
   function splitDepartments(cell) {
     if (!cell) return [];
-    var parts = cell.split(/[;,/]|\s+&\s+|\s+and\s+/i);
+    var parts = /\r?\n/.test(cell) ? cell.split(/\r?\n/) : cell.split(/[;,/]|\s+&\s+|\s+and\s+/i);
     return parts.map(function (p) { return p.trim().toUpperCase(); }).filter(Boolean);
   }
 
@@ -1474,7 +1474,7 @@
           td.textContent = cats.length ? cats.join("; ") : "—";
         } else if (f === "department") {
           var depts = splitDepartments(r[f]);
-          td.textContent = depts.length ? depts.join("; ") : "—";
+          td.innerHTML = depts.length ? depts.map(escapeHtml).join("<br>") : "—";
         } else if (f === "faculty") {
           var facs = splitFaculty(r[f]);
           td.innerHTML = facs.length ? facs.map(escapeHtml).join("<br>") : "—";
@@ -1496,7 +1496,7 @@
     var facultyList = splitFaculty(r.faculty);
     document.getElementById("detail-faculty").innerHTML = facultyList.length ? facultyList.map(escapeHtml).join("<br>") : "—";
     var deptList = splitDepartments(r.department);
-    document.getElementById("detail-department").textContent = deptList.length ? deptList.join(", ") : "—";
+    document.getElementById("detail-department").innerHTML = deptList.length ? deptList.map(escapeHtml).join("<br>") : "—";
     document.getElementById("detail-details").textContent = r.details || [r.venue, r.year].filter(Boolean).join("\n") || "—";
 
     var classEl = document.getElementById("detail-classification");

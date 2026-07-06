@@ -202,7 +202,7 @@
     margin-bottom: 1.1rem;
   }
   .filter-field label { display: block; font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.3rem; }
-  .filter-field input, .filter-field select {
+  .filter-field input {
     width: 100%;
     font: inherit; font-size: 0.85rem;
     padding: 0.5rem 0.6rem;
@@ -211,6 +211,51 @@
     background: var(--page);
     color: var(--text-primary);
   }
+
+  .filter-field.msdd { position: relative; }
+  .msdd-trigger {
+    width: 100%;
+    display: flex; align-items: center; justify-content: space-between; gap: 0.4rem;
+    font: inherit; font-size: 0.85rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--page);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  .msdd-trigger-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
+  .msdd-caret { width: 14px; height: 14px; flex: none; color: var(--text-muted); transition: transform 0.12s ease; }
+  .msdd.open .msdd-caret { transform: rotate(180deg); }
+  .msdd-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 100%;
+    width: max-content;
+    max-width: min(320px, 90vw);
+    max-height: 260px;
+    overflow-y: auto;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+    padding: 0.4rem;
+    z-index: 20;
+  }
+  .msdd.open .msdd-panel { display: block; }
+  .msdd-option {
+    display: flex; align-items: center; gap: 0.55rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.84rem;
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+  .msdd-option:hover { background: var(--page); }
+  .msdd-option input[type="checkbox"] { flex: none; width: 15px; height: 15px; accent-color: var(--series-1); cursor: pointer; }
+  .msdd-divider { height: 1px; background: var(--gridline); margin: 0.3rem 0.2rem; }
 
   .charts-grid {
     display: grid;
@@ -476,25 +521,45 @@
         <label for="f-search">Search Publications / Faculty / Venue</label>
         <input id="f-search" type="text" placeholder="Type paper title, co-author names, journal/conference or publication details…" />
       </div>
-      <div class="filter-field">
-        <label for="f-year">Publication Year</label>
-        <select id="f-year"><option value="">All</option></select>
+      <div class="filter-field msdd" id="ms-year">
+        <label>Publication Year</label>
+        <button type="button" class="msdd-trigger" id="ms-year-trigger">
+          <span class="msdd-trigger-text">All</span>
+          <svg class="msdd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="msdd-panel" id="ms-year-panel"></div>
       </div>
-      <div class="filter-field">
-        <label for="f-class">Classification</label>
-        <select id="f-class"><option value="">All Classifications</option></select>
+      <div class="filter-field msdd" id="ms-classification">
+        <label>Classification</label>
+        <button type="button" class="msdd-trigger" id="ms-classification-trigger">
+          <span class="msdd-trigger-text">All Classifications</span>
+          <svg class="msdd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="msdd-panel" id="ms-classification-panel"></div>
       </div>
-      <div class="filter-field">
-        <label for="f-type">Type</label>
-        <select id="f-type"><option value="">All</option></select>
+      <div class="filter-field msdd" id="ms-type">
+        <label>Type</label>
+        <button type="button" class="msdd-trigger" id="ms-type-trigger">
+          <span class="msdd-trigger-text">All</span>
+          <svg class="msdd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="msdd-panel" id="ms-type-panel"></div>
       </div>
-      <div class="filter-field">
-        <label for="f-dept">Department</label>
-        <select id="f-dept"><option value="">All</option></select>
+      <div class="filter-field msdd" id="ms-department">
+        <label>Department</label>
+        <button type="button" class="msdd-trigger" id="ms-department-trigger">
+          <span class="msdd-trigger-text">All</span>
+          <svg class="msdd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="msdd-panel" id="ms-department-panel"></div>
       </div>
-      <div class="filter-field">
-        <label for="f-quartile">Highest Quartile</label>
-        <select id="f-quartile"><option value="">All Quartiles</option></select>
+      <div class="filter-field msdd" id="ms-quartile">
+        <label>Highest Quartile</label>
+        <button type="button" class="msdd-trigger" id="ms-quartile-trigger">
+          <span class="msdd-trigger-text">All Quartiles</span>
+          <svg class="msdd-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="msdd-panel" id="ms-quartile-panel"></div>
       </div>
     </div>
 
@@ -863,39 +928,114 @@
     return arr;
   }
 
-  function populateSelect(id, values, placeholder) {
-    var el = document.getElementById(id);
-    var current = el.value;
-    el.innerHTML = "";
-    var opt0 = document.createElement("option");
-    opt0.value = ""; opt0.textContent = placeholder;
-    el.appendChild(opt0);
-    values.forEach(function (v) {
-      var opt = document.createElement("option");
-      opt.value = v; opt.textContent = v;
-      el.appendChild(opt);
+  // ---------- multi-select filter dropdowns (checkboxes, not native <select>) ----------
+  var FILTER_FIELDS = ["year", "classification", "type", "department", "quartile"];
+  var MSDD_PLACEHOLDER = { year: "All", classification: "All Classifications", type: "All", department: "All", quartile: "All Quartiles" };
+  var filterSelections = { year: new Set(), classification: new Set(), type: new Set(), department: new Set(), quartile: new Set() };
+
+  function refreshMultiSelectUI(field) {
+    var sel = filterSelections[field];
+    var panel = document.getElementById("ms-" + field + "-panel");
+    var allCb = panel.querySelector(".msdd-all-option input");
+    if (allCb) allCb.checked = sel.size === 0;
+    panel.querySelectorAll(".msdd-item-checkbox").forEach(function (cb) {
+      cb.checked = sel.has(cb.value);
     });
-    if (values.indexOf(current) !== -1) el.value = current;
+    var textEl = document.querySelector("#ms-" + field + "-trigger .msdd-trigger-text");
+    if (sel.size === 0) textEl.textContent = MSDD_PLACEHOLDER[field];
+    else if (sel.size === 1) textEl.textContent = Array.from(sel)[0];
+    else textEl.textContent = sel.size + " selected";
   }
+
+  function setFilterSelection(field, newSet) {
+    filterSelections[field] = newSet;
+    refreshMultiSelectUI(field);
+    render();
+  }
+
+  function populateMultiSelect(field, values) {
+    var panel = document.getElementById("ms-" + field + "-panel");
+    // keep selections that still exist among the new values, drop the rest
+    var preserved = new Set();
+    filterSelections[field].forEach(function (v) { if (values.indexOf(v) !== -1) preserved.add(v); });
+    filterSelections[field] = preserved;
+
+    panel.innerHTML = "";
+    var allLabel = document.createElement("label");
+    allLabel.className = "msdd-option msdd-all-option";
+    var allCb = document.createElement("input");
+    allCb.type = "checkbox";
+    allCb.addEventListener("change", function () { setFilterSelection(field, new Set()); });
+    allLabel.appendChild(allCb);
+    allLabel.appendChild(document.createTextNode(MSDD_PLACEHOLDER[field]));
+    panel.appendChild(allLabel);
+    var divider = document.createElement("div");
+    divider.className = "msdd-divider";
+    panel.appendChild(divider);
+
+    values.forEach(function (v) {
+      var label = document.createElement("label");
+      label.className = "msdd-option";
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.className = "msdd-item-checkbox";
+      cb.value = v;
+      cb.addEventListener("change", function () {
+        var next = new Set(filterSelections[field]);
+        if (cb.checked) next.add(v); else next.delete(v);
+        setFilterSelection(field, next);
+      });
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(v));
+      panel.appendChild(label);
+    });
+
+    refreshMultiSelectUI(field);
+  }
+
+  function closeAllFilterPanels() {
+    FILTER_FIELDS.forEach(function (field) {
+      document.getElementById("ms-" + field).classList.remove("open");
+    });
+  }
+
+  FILTER_FIELDS.forEach(function (field) {
+    document.getElementById("ms-" + field + "-trigger").addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      var root = document.getElementById("ms-" + field);
+      var wasOpen = root.classList.contains("open");
+      closeAllFilterPanels();
+      root.classList.toggle("open", !wasOpen);
+    });
+  });
+  document.addEventListener("click", function (ev) {
+    if (!ev.target.closest(".msdd")) closeAllFilterPanels();
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") closeAllFilterPanels();
+  });
 
   function currentFilters() {
     return {
       search: document.getElementById("f-search").value.trim().toLowerCase(),
-      year: document.getElementById("f-year").value,
-      classification: document.getElementById("f-class").value,
-      type: document.getElementById("f-type").value,
-      department: document.getElementById("f-dept").value,
-      quartile: document.getElementById("f-quartile").value
+      year: filterSelections.year,
+      classification: filterSelections.classification,
+      type: filterSelections.type,
+      department: filterSelections.department,
+      quartile: filterSelections.quartile
     };
   }
 
   function applyFilters(records, f) {
     return records.filter(function (r) {
-      if (f.year && r.year !== f.year) return false;
-      if (f.classification && r.classification !== f.classification) return false;
-      if (f.type && r.type !== f.type) return false;
-      if (f.department && splitDepartments(r.department).indexOf(f.department) === -1) return false;
-      if (f.quartile && bestQuartile(r) !== f.quartile) return false;
+      if (f.year.size && !f.year.has(r.year)) return false;
+      if (f.classification.size && !f.classification.has(r.classification)) return false;
+      if (f.type.size && !f.type.has(r.type)) return false;
+      if (f.department.size) {
+        var depts = splitDepartments(r.department);
+        if (!depts.some(function (d) { return f.department.has(d); })) return false;
+      }
+      if (f.quartile.size && !f.quartile.has(bestQuartile(r))) return false;
       if (f.search) {
         var hay = (r.title + " " + r.faculty + " " + r.venue).toLowerCase();
         if (hay.indexOf(f.search) === -1) return false;
@@ -1385,20 +1525,17 @@
   var currentMissing = [];
 
   function initFilters() {
-    populateSelect("f-year", uniqueSorted(ALL_RECORDS, "year", { numericYear: true }), "All");
-    populateSelect("f-class", uniqueSorted(ALL_RECORDS, "classification"), "All Classifications");
-    populateSelect("f-type", uniqueSorted(ALL_RECORDS, "type"), "All");
-    populateSelect("f-dept", DEPARTMENT_OPTIONS, "All");
+    populateMultiSelect("year", uniqueSorted(ALL_RECORDS, "year", { numericYear: true }));
+    populateMultiSelect("classification", uniqueSorted(ALL_RECORDS, "classification"));
+    populateMultiSelect("type", uniqueSorted(ALL_RECORDS, "type"));
+    populateMultiSelect("department", DEPARTMENT_OPTIONS);
     var quartileSet = {};
     ALL_RECORDS.forEach(function (r) { quartileSet[bestQuartile(r)] = true; });
     var quartileOptions = QUARTILE_ORDER.filter(function (q) { return quartileSet[q]; });
-    populateSelect("f-quartile", quartileOptions, "All Quartiles");
+    populateMultiSelect("quartile", quartileOptions);
   }
 
-  ["f-search", "f-year", "f-class", "f-type", "f-dept", "f-quartile"].forEach(function (id) {
-    document.getElementById(id).addEventListener("input", render);
-    document.getElementById(id).addEventListener("change", render);
-  });
+  document.getElementById("f-search").addEventListener("input", render);
   window.addEventListener("resize", debounce(render, 150));
 
   function debounce(fn, ms) {

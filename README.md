@@ -11,7 +11,9 @@ published to the web.
   - Stat tiles: total publications, Scopus indexed ratio, Q1 share, unique
     research faculty
   - Filters: free-text search plus Publication Year, Classification, Type,
-    Department, and Highest Quartile
+    Department, and Highest Quartile — each a checkbox multi-select dropdown
+    (not a native `<select>`), so multiple values can be picked at once
+    within a field (OR'd together); different fields still AND together
   - Charts: publications per year (bar), category indexation (donut),
     publication type (horizontal bar), publications per faculty
     (top 10, horizontal bar), highest SJR quartile distribution (pie,

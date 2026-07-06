@@ -73,6 +73,16 @@ etc.). `FIELD_ALIASES.type` checks `publicationtype`/`typeofpublication`/
 exact-match check first instead of whichever "Type"-named column happens
 to exist.
 
+### Faculty and Department: one name/code per line
+
+Like the Category/Quartile/Percentile columns, a cell listing multiple
+faculty members (or multiple departments for a co-authored paper) uses one
+entry per line, not comma/semicolon-separated — `splitFaculty()` and
+`splitDepartments()` both check for embedded newlines first before falling
+back to `;`/`,`/`&`/"and" for single-line cells. Both the table and the
+detail modal render each entry on its own line rather than letting the
+raw newline collapse into a run-together string.
+
 ### Department
 
 The Department filter is fixed to the three CCS departments (`DEPARTMENT_OPTIONS`

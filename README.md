@@ -39,6 +39,24 @@ https://zefanonuevo.github.io/ccs/
 
 (Settings → Pages → Source: Deploy from a branch → this branch → `/` root.)
 
+## Self-hosting with Docker
+
+To run this on your own server instead (or in addition):
+
+```bash
+git clone https://github.com/zefanonuevo/ccs.git
+cd ccs
+docker compose up -d --build
+```
+
+The dashboard will be live at `http://<your-server>:8080/`. `docker-compose.yml`
+builds the image from the `Dockerfile` (nginx serving the static files) and
+restarts it automatically on reboot/crash (`restart: unless-stopped`).
+
+To pick up new commits later, re-run `./deploy.sh` from the repo directory —
+it pulls, rebuilds, and restarts the container in one step. Change the
+published port by editing the `8080:80` line in `docker-compose.yml`.
+
 ## Column matching
 
 The dashboard doesn't assume exact header names — it matches common

@@ -1,0 +1,7 @@
+services:
+  ccs-dashboard:
+    build: .
+    container_name: ccs-dashboard
+    restart: unless-stopped
+    ports:
+      - "8080:80"

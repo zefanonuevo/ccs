@@ -80,7 +80,14 @@ near `splitDepartments` in `index.html`: `CT`, `IT`, `ST`) rather than
 whatever values happen to appear in the sheet. A publication co-authored by
 faculty from more than one department can list several (e.g. `"CT; IT"`),
 separated by `;`, `,`, `/`, "and", or "&"; it then matches — and appears
-under — every one of those departments when filtering.
+under — every one of those departments when filtering. When a department
+filter is active, the table's Faculty/Department columns for that row
+narrow to just the co-author(s) in the selected department(s) (kept
+line-aligned via `facultyDeptDisplayLists()`), rather than showing every
+co-author on the paper regardless of department — e.g. filtering by ST on
+a paper with two CT co-authors and one ST co-author shows only the ST
+person. The publication detail modal always shows the complete,
+unfiltered author/department list.
 
 ## Pointing at a different sheet or tab
 

@@ -1443,6 +1443,31 @@
   // ---------- table ----------
   var TABLE_FIELDS = ["title", "faculty", "venue", "year", "classification", "type", "department", "quartile", "category"];
 
+  // Faculty and Department are parallel, line-per-person lists. When a
+  // department filter is active, show only the co-author(s) in the selected
+  // department(s) rather than the paper's full author list — e.g. filtering
+  // by ST on a CT/CT/ST paper shows just the ST co-author, not all three.
+  function facultyDeptDisplayLists(r) {
+    var facs = splitFaculty(r.faculty);
+    var depts = splitDepartments(r.department);
+    var deptFilter = filterSelections.department;
+
+    if (!deptFilter.size || facs.length !== depts.length) {
+      return { faculty: facs, department: depts };
+    }
+
+    var matchedFaculty = [], matchedDept = [];
+    facs.forEach(function (name, i) {
+      if (deptFilter.has(depts[i])) {
+        matchedFaculty.push(name);
+        matchedDept.push(depts[i]);
+      }
+    });
+    // applyFilters already guarantees at least one department matches, but
+    // fall back to the full lists rather than an empty cell just in case
+    return matchedFaculty.length ? { faculty: matchedFaculty, department: matchedDept } : { faculty: facs, department: depts };
+  }
+
   function renderTable(records, missing) {
     var head = document.getElementById("table-head-row");
     var body = document.getElementById("table-body");
@@ -1463,6 +1488,7 @@
       row.tabIndex = 0;
       row.addEventListener("click", function () { openDetailModal(r); });
       row.addEventListener("keydown", function (ev) { if (ev.key === "Enter") openDetailModal(r); });
+      var fd = facultyDeptDisplayLists(r);
       TABLE_FIELDS.forEach(function (f, idx) {
         var td = document.createElement("td");
         if (idx === 0) td.className = "primary";
@@ -1473,11 +1499,9 @@
           var cats = splitCategories(r[f]);
           td.textContent = cats.length ? cats.join("; ") : "—";
         } else if (f === "department") {
-          var depts = splitDepartments(r[f]);
-          td.innerHTML = depts.length ? depts.map(escapeHtml).join("<br>") : "—";
+          td.innerHTML = fd.department.length ? fd.department.map(escapeHtml).join("<br>") : "—";
         } else if (f === "faculty") {
-          var facs = splitFaculty(r[f]);
-          td.innerHTML = facs.length ? facs.map(escapeHtml).join("<br>") : "—";
+          td.innerHTML = fd.faculty.length ? fd.faculty.map(escapeHtml).join("<br>") : "—";
         } else {
           td.textContent = r[f] || "—";
         }

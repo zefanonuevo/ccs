@@ -1,6 +1,10 @@
 services:
   ccs-dashboard:
-    build: .
+    build:
+      context: .
+      args:
+        APP_VERSION: ${APP_VERSION:-dev}
+    image: ccs-dashboard:${APP_VERSION:-latest}
     container_name: ccs-dashboard
     restart: unless-stopped
     ports:

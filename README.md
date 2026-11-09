@@ -53,9 +53,19 @@ The dashboard will be live at `http://<your-server>:8080/`. `docker-compose.yml`
 builds the image from the `Dockerfile` (nginx serving the static files) and
 restarts it automatically on reboot/crash (`restart: unless-stopped`).
 
-To pick up new commits later, re-run `./deploy.sh` from the repo directory —
-it pulls, rebuilds, and restarts the container in one step. Change the
-published port by editing the `8080:80` line in `docker-compose.yml`.
+To pick up new commits later, re-run `./deploy.sh` from the repo directory.
+It pulls, reads the dashboard version from `APP_VERSION` in `index.html`,
+rebuilds the image with a fresh nginx base (`docker compose build --pull`),
+restarts the container, and then checks that the running container serves that
+version. The image is tagged `ccs-dashboard:<version>` and labelled with the
+version, and `docker ps` shows its health status. Change the published port by
+editing the `8080:80` line in `docker-compose.yml`.
+
+Only the site files go into the image. `.dockerignore` leaves out the Docker
+files, `deploy.sh`, `README.md` and `DATA_QUALITY.md`, so they are not served
+publicly. The browser still loads the Google Sheet and the Inter and Poppins
+fonts directly from Google, so visitors need internet access but the server
+itself does not.
 
 ## Column matching
 

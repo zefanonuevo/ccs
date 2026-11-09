@@ -1,4 +1,7 @@
 .git
 Dockerfile
 .dockerignore
+docker-compose.yml
+deploy.sh
 README.md
+DATA_QUALITY.md

@@ -51,3 +51,26 @@ These figures were recomputed independently of the dashboard code using the same
 
 - 2026 has 67 records and is still in progress, so the year trend and the 2026 vs 2025 comparison show a partial year.
 - The dashboard counts a faculty name exactly as typed, so the spelling variants in item 1 inflate Research faculty and split a person's bar in Publications per Faculty until the sheet is fixed.
+
+## Department and faculty attribution (checked 2026-11-09)
+
+The Department filter relies on the Faculty and Dept cells having the same
+number of lines. In the live sheet, 745 of 752 records line up, and all 69
+records that span more than one department line up, so the dashboard can
+attribute each co-author to the right department for them. These 7 do not,
+and they are the remaining sources of wrong department credit:
+
+| Row | Faculty cell | Dept cell | Fix |
+| --- | --- | --- | --- |
+| 38 | Ebardo, Ryan; Suarez, Merlin Teodosia | ST | Dept should be `IT` then `ST` (one per line, same order as Faculty) |
+| 173 | Suarez, Merlin Teodosia; Ebardo, Ryan | ST | Dept should be `ST` then `IT` |
+| 537 | Ebardo, Ryan; Suarez, Merlin Teodosia | ST | Dept should be `IT` then `ST` |
+| 48 | Ebardo, Ryan | (blank) | Add `IT` |
+| 177 | Cempron, Jonathan Paul; Ilao, Joel | CT | Add the second department, or confirm both are CT and repeat it |
+| 261 | Pascual, Ronald; Azcarraga, Judith; Ing, John Andrew | CT; CT | Add a third department entry |
+| 625 | Department of Transportation: Data Warehousing and Analytics | CT | The Faculty cell holds text that is not a name, and the dashboard counts it as two faculty. Replace it with the real faculty name or names |
+
+Rows 38, 173 and 537 are the ones that still credit Ebardo, Ryan (IT) to ST
+when the Department filter is ST. I confirmed the department for Ebardo, Ryan
+from the other 60 records that list one: all of them say IT. The departments
+for rows 177, 261 and 625 need someone who knows the papers.

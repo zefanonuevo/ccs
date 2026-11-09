@@ -777,7 +777,7 @@
 
   <footer class="site-foot">
     <span>CCS Commons &middot; Faculty Publications</span>
-    <span id="app-version">v1.1.0</span>
+    <span id="app-version">v1.1.1</span>
   </footer>
 
   <div class="tooltip" id="tooltip"></div>
@@ -831,7 +831,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.1.0";
+  var APP_VERSION = "1.1.1";
   document.getElementById("app-version").textContent = "v" + APP_VERSION;
   var SHEET_ID = "1c4ilWtBXwdQth8IXd6MgZ4odhWubQSc69AmYohgYrbs";
   var GID = "1125842073";
@@ -1613,6 +1613,19 @@
   // department filter is active, show only the co-author(s) in the selected
   // department(s) rather than the paper's full author list — e.g. filtering
   // by ST on a CT/CT/ST paper shows just the ST co-author, not all three.
+  // Faculty names to count for a record under the active department filter. The Faculty and
+  // Dept cells are line-aligned (name i belongs to department i), so with a department filter
+  // on, only names whose own department is selected are counted. A paper kept because one
+  // co-author is in ST no longer credits an IT co-author to ST. If the two lists do not line
+  // up we cannot tell who belongs where, so every name is kept.
+  function facultyForCount(r, deptSet) {
+    var facs = splitFaculty(r.faculty);
+    if (!deptSet || !deptSet.size) return facs;
+    var depts = splitDepartments(r.department);
+    if (facs.length !== depts.length) return facs;
+    var kept = facs.filter(function (name, i) { return deptSet.has(depts[i]); });
+    return kept.length ? kept : facs;
+  }
   function facultyDeptDisplayLists(r) {
     var facs = splitFaculty(r.faculty);
     var depts = splitDepartments(r.department);
@@ -1786,7 +1799,7 @@
       : "No data";
 
     var facultySet = {};
-    filtered.forEach(function (r) { splitFaculty(r.faculty).forEach(function (name) { facultySet[name] = true; }); });
+    filtered.forEach(function (r) { facultyForCount(r, f.department).forEach(function (name) { facultySet[name] = true; }); });
     document.getElementById("stat-faculty").textContent = Object.keys(facultySet).length;
 
     // chart: publications per year
@@ -1812,7 +1825,7 @@
 
     // chart: publications per faculty (top 10 most active)
     var facultyCounts = {};
-    filtered.forEach(function (r) { splitFaculty(r.faculty).forEach(function (name) { facultyCounts[name] = (facultyCounts[name] || 0) + 1; }); });
+    filtered.forEach(function (r) { facultyForCount(r, f.department).forEach(function (name) { facultyCounts[name] = (facultyCounts[name] || 0) + 1; }); });
     var facultyData = Object.keys(facultyCounts).map(function (k) { return { label: k, value: facultyCounts[k] }; })
       .sort(function (a, b) { return b.value - a.value; }).slice(0, 10);
     renderBarChart(document.getElementById("chart-faculty"), facultyData, "--series-1", { horizontal: true, height: Math.max(160, facultyData.length * 32) });
@@ -1865,13 +1878,13 @@
   // ---------- compare periods ----------
   var cmpInit = false;
   function pct(n, d) { return d ? Math.round((n / d) * 1000) / 10 : null; }
-  function periodStats(records) {
+  function periodStats(records, deptSet) {
     var total = records.length;
     var scopus = records.filter(function (r) { return /scopus/i.test(r.classification); }).length;
     var q1 = records.filter(function (r) { return bestQuartile(r) === "Q1"; }).length;
     var ranked = records.filter(function (r) { var b = bestQuartile(r); return b && b !== "Unranked"; }).length;
     var fac = {};
-    records.forEach(function (r) { splitFaculty(r.faculty).forEach(function (n) { fac[n] = true; }); });
+    records.forEach(function (r) { facultyForCount(r, deptSet).forEach(function (n) { fac[n] = true; }); });
     return { total: total, scopusPct: pct(scopus, total), q1: q1, q1RankedPct: pct(q1, ranked), faculty: Object.keys(fac).length };
   }
   function fmtVal(v, unit) { return v === null ? "n/a" : (unit === "%" ? v + "%" : String(v)); }
@@ -1903,8 +1916,8 @@
     }
     var f = currentFilters();
     var base = { search: f.search, year: new Set(), classification: f.classification, type: f.type, department: f.department, quartile: f.quartile };
-    var a = periodStats(applyFilters(ALL_RECORDS, Object.assign({}, base, { year: new Set([selA.value]) })));
-    var b = periodStats(applyFilters(ALL_RECORDS, Object.assign({}, base, { year: new Set([selB.value]) })));
+    var a = periodStats(applyFilters(ALL_RECORDS, Object.assign({}, base, { year: new Set([selA.value]) })), f.department);
+    var b = periodStats(applyFilters(ALL_RECORDS, Object.assign({}, base, { year: new Set([selB.value]) })), f.department);
     document.getElementById("cmp-a-head").textContent = selA.value;
     document.getElementById("cmp-b-head").textContent = selB.value;
     var rowsDef = [

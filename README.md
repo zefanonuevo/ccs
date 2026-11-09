@@ -154,7 +154,7 @@ All KPIs respond to the active filters. "Records" means rows in the sheet tab.
 | Total publications | Count of records after filters |
 | Scopus indexed ratio | Records whose Classification contains "Scopus" / total records |
 | Top quartile (Q1) | Records whose best SJR quartile is Q1 / total records. The sub-label also shows Q1 as a share of records that have a quartile at all |
-| Research faculty | Distinct names across the Faculty column (one name per line, or split on `;`, `&`, `and`) |
+| Research faculty | Distinct names across the Faculty column (one name per line, or split on `;`, `&`, `and`). With a Department filter on, only names whose own department is selected are counted |
 | Best quartile of a record | The lowest-numbered quartile across its subject-area breakdown, ignoring Unranked |
 | Compare periods | The same measures computed separately for each selected year, with change as B minus A (percentage points for shares) |
 
@@ -169,7 +169,22 @@ See `DATA_QUALITY.md` for the data checks run against the live sheet.
 The current version shows in the page footer and is set by `APP_VERSION` near
 the top of the `<script>` block in `index.html`. Bump it with each release.
 
+- **1.1.1**: Department filter now counts only the faculty who belong to the
+  selected department in Publications per Faculty, the Research faculty card
+  and Compare periods. Before, a paper kept because one co-author was in ST also
+  credited its IT co-authors to ST.
 - **1.1.0**: CCS Commons portal styling, Compare periods, sortable table,
   ranked-only Q1 share on the Q1 card, mobile chart overflow fix, KPI
   definitions and data-quality report.
 - **1.0.0**: Original dashboard (live Google Sheet, filters, charts, detail modal).
+
+## How department attribution works
+
+The Faculty and Dept cells are line-aligned: the first name belongs to the
+first department, the second name to the second, and so on. A paper is kept by
+the Department filter when any of its departments is selected. The table,
+Publications per Faculty, Research faculty and Compare periods then show or
+count only the names whose own department is selected. If a record has a
+different number of names and departments, the dashboard cannot tell who
+belongs where, so it keeps every name; see `DATA_QUALITY.md` for the rows
+affected.

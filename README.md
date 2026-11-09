@@ -17,8 +17,8 @@ published to the web.
   - Charts: publications per year (line, area wash under the trend, peak
     and endpoint value labels), category indexation (donut),
     publication type (horizontal bar), publications per faculty
-    (top 10, horizontal bar), highest SJR quartile distribution (pie,
-    fixed Q1-green → Q4-red → Unranked-gray coloring), and top research
+    (top 10, horizontal bar), SJR quartiles by year (stacked bar per
+    publication year, fixed Q1-green → Q4-red → Unranked-gray coloring), and top research
     categories split by quartile (stacked bar) — all interactive (hover
     tooltips, react live to filters)
   - A filtered, searchable publications table — click any row to open a
@@ -74,7 +74,7 @@ one newline-separated line per subject area, aligned by line position (e.g.
 line 3 of each column together describe one subject area). `getCategoryBreakdown()`
 zips these back into `{category, quartile, percentile}` rows; `bestQuartile()`
 derives the publication's overall "highest quartile" (used by the Q1 stat
-tile, the quartile filter, and the quartile pie chart) as the best value
+tile, the quartile filter, and the quartiles-by-year chart) as the best value
 across that breakdown, not just whichever line comes first. A publication
 with only a single quartile/percentile value for multiple categories has
 that value reused across all of them. Sheets that instead pack
@@ -129,7 +129,9 @@ which tab within it.
 The page uses the CCS Commons portal (ccs.dlsu.edu.ph) design tokens: Ink
 `#111a15`, Forest `#0b5d45`, Mint `#dcebe2`, Paper `#f4f7f3`, Amber `#8a5a00`,
 the portal's dark-mode palette, the 56px sticky blurred nav, pill-shaped
-controls, and the same system font stack. All of it lives in the
+controls. Type is Inter (Bold/Black) for headings and numbers and Poppins
+(Medium/SemiBold) for subheadings, labels and short copy, loaded from Google
+Fonts. Paragraph-length text stays in Inter. All of it lives in the
 `<style id="portal-theme">` block, which is layered over the base styles, so
 chart and table logic is unchanged. If the portal's tokens change, update the
 variables at the top of that block.
@@ -169,6 +171,9 @@ See `DATA_QUALITY.md` for the data checks run against the live sheet.
 The current version shows in the page footer and is set by `APP_VERSION` near
 the top of the `<script>` block in `index.html`. Bump it with each release.
 
+- **1.2.0**: Inter (headings) and Poppins (subheadings, labels and short copy)
+  loaded from Google Fonts; the Highest SJR Quartile pie is now a stacked bar
+  chart per publication year.
 - **1.1.1**: Department filter now counts only the faculty who belong to the
   selected department in Publications per Faculty, the Research faculty card
   and Compare periods. Before, a paper kept because one co-author was in ST also

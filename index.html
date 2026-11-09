@@ -4,6 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#0b5d45" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@500;600&display=swap" rel="stylesheet" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230b5d45' d='M12 1l2.3 8.7L23 12l-8.7 2.3L12 23l-2.3-8.7L1 12l8.7-2.3z'/%3E%3C/svg%3E" />
 <title>Faculty Publications | CCS Commons</title>
 <style>
@@ -452,6 +455,7 @@
     --r-sm: 10px; --r-md: 16px; --r-lg: 24px;
     --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
     --f-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --f-accent: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -539,6 +543,21 @@
 
   .site-foot { max-width: 1400px; margin: 0 auto; padding: 1rem 1.5rem 2rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-size: 0.78rem; color: var(--text-muted); border-top: 1px solid var(--border); }
   #app-version { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+  /* Typography: Inter (Bold/Black) for headings and numbers, Poppins (Medium/SemiBold) for
+     subheadings, labels and short accents. Paragraph-length text stays in Inter. */
+  h1, h2, h3, .nav-brand, .stat-value, .modal-title { font-family: var(--f-display); }
+  .hero h1 { font-weight: 900; }
+  .chart-head h3, .table-head h3, .compare-card h3, .modal-title { font-weight: 700; }
+  .eyebrow, .hero-sub, .chart-subtitle, .stat-label, .stat-sub, .chart-tag, .pill, .legend,
+  .filter-field label, thead th, .modal-field-label, .nav-link, .compare-controls label,
+  .compare-table thead th, .site-foot, .status-line, #table-count {
+    font-family: var(--f-accent);
+  }
+  .eyebrow, .stat-label, .chart-tag, .pill, .filter-field label, thead th, .modal-field-label,
+  .nav-link, .compare-controls label { font-weight: 600; }
+  .hero-sub, .chart-subtitle, .stat-sub, .legend, .site-foot, .status-line, #table-count { font-weight: 500; }
+  svg text { font-family: var(--f-display); }
 
   /* Compare periods + sortable headers */
   .compare-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1.15rem 1.3rem; margin-bottom: 1.1rem; }
@@ -725,9 +744,15 @@
         <div class="chart-body" id="chart-faculty"></div>
       </div>
       <div class="chart-card">
-        <div class="chart-head"><h3>Highest SJR Quartile Distribution</h3><span class="chart-tag">Rank Tier</span></div>
-        <div class="chart-body" id="chart-quartile-pie"></div>
-        <div class="legend" id="quartile-pie-legend"></div>
+        <div class="chart-head">
+          <div>
+            <h3>SJR Quartiles by Year</h3>
+            <p class="chart-subtitle">Highest quartile of each paper, per publication year</p>
+          </div>
+          <span class="chart-tag">Rank Tier</span>
+        </div>
+        <div class="chart-body" id="chart-quartile-year"></div>
+        <div class="legend" id="quartile-year-legend"></div>
       </div>
       <div class="chart-card">
         <div class="chart-head">
@@ -777,7 +802,7 @@
 
   <footer class="site-foot">
     <span>CCS Commons &middot; Faculty Publications</span>
-    <span id="app-version">v1.1.1</span>
+    <span id="app-version">v1.2.0</span>
   </footer>
 
   <div class="tooltip" id="tooltip"></div>
@@ -831,7 +856,7 @@
 (function () {
   "use strict";
 
-  var APP_VERSION = "1.1.1";
+  var APP_VERSION = "1.2.0";
   document.getElementById("app-version").textContent = "v" + APP_VERSION;
   var SHEET_ID = "1c4ilWtBXwdQth8IXd6MgZ4odhWubQSc69AmYohgYrbs";
   var GID = "1125842073";
@@ -1520,7 +1545,8 @@
   }
 
   // stacked vertical bar chart, e.g. category totals split into quartile segments
-  function renderStackedBarChart(container, legendEl, data, order, colorMap) {
+  function renderStackedBarChart(container, legendEl, data, order, colorMap, opts) {
+    opts = opts || {};
     container.innerHTML = "";
     legendEl.innerHTML = "";
     if (!data.length) { renderEmpty(container, "No data for current filters"); return; }
@@ -1532,7 +1558,7 @@
     // width, so it can never bleed past the chart's own box into the legend/table below.
     var padding = {
       top: 18, right: 10, left: 34,
-      bottom: Math.ceil(14 + maxLabelPx * Math.sin(rotDeg * Math.PI / 180) + 10)
+      bottom: opts.flatLabels ? 30 : Math.ceil(14 + maxLabelPx * Math.sin(rotDeg * Math.PI / 180) + 10)
     };
     var plotH = 190;
     var height = padding.top + plotH + padding.bottom;
@@ -1583,12 +1609,17 @@
 
       var labelX = x0 + thickness / 2;
       var labelY = height - padding.bottom + 14;
-      var text = svgEl("text", {
-        x: labelX, y: labelY, fill: muted, "text-anchor": "end", "font-size": labelFontSize,
-        "font-family": "system-ui, sans-serif", transform: "rotate(-" + rotDeg + " " + labelX + " " + labelY + ")"
-      });
-      text.textContent = truncateLabel(String(d.label), maxLabelPx, labelFontSize);
-      svg.appendChild(text);
+      if (opts.flatLabels) {
+        // horizontal year labels; on a narrow card show every other year so they never overlap
+        if (band >= 30 || i % 2 === 0) svg.appendChild(labelText(labelX, labelY, d.label, muted, "middle"));
+      } else {
+        var text = svgEl("text", {
+          x: labelX, y: labelY, fill: muted, "text-anchor": "end", "font-size": labelFontSize,
+          "font-family": "system-ui, sans-serif", transform: "rotate(-" + rotDeg + " " + labelX + " " + labelY + ")"
+        });
+        text.textContent = truncateLabel(String(d.label), maxLabelPx, labelFontSize);
+        svg.appendChild(text);
+      }
       svg.appendChild(labelText(labelX, height - padding.bottom - (d.total / niceMax) * plotH - 6, d.total, primary, "middle", true));
     });
 
@@ -1830,13 +1861,21 @@
       .sort(function (a, b) { return b.value - a.value; }).slice(0, 10);
     renderBarChart(document.getElementById("chart-faculty"), facultyData, "--series-1", { horizontal: true, height: Math.max(160, facultyData.length * 32) });
 
-    // chart: highest SJR quartile distribution (one slice per paper, fixed semantic colors)
-    var quartileCounts = {};
-    filtered.forEach(function (r) { var q = bestQuartile(r); quartileCounts[q] = (quartileCounts[q] || 0) + 1; });
-    var quartilePieData = QUARTILE_ORDER.filter(function (q) { return quartileCounts[q]; }).map(function (q) {
-      return { label: q, value: quartileCounts[q], colorVar: QUARTILE_COLORS[q] };
+    // chart: highest SJR quartile of each paper, stacked per publication year
+    // (bar height = publications that year, so it ties back to the trend chart)
+    var quartileByYear = {};
+    filtered.forEach(function (r) {
+      if (!r.year) return;
+      var q = bestQuartile(r);
+      if (!quartileByYear[r.year]) quartileByYear[r.year] = {};
+      quartileByYear[r.year][q] = (quartileByYear[r.year][q] || 0) + 1;
     });
-    renderDonut(document.getElementById("chart-quartile-pie"), document.getElementById("quartile-pie-legend"), quartilePieData, { innerRatio: 0 });
+    var quartileYearData = Object.keys(quartileByYear).sort().map(function (y) {
+      var segs = quartileByYear[y];
+      var total = QUARTILE_ORDER.reduce(function (sum, q) { return sum + (segs[q] || 0); }, 0);
+      return { label: y, total: total, segs: segs };
+    });
+    renderStackedBarChart(document.getElementById("chart-quartile-year"), document.getElementById("quartile-year-legend"), quartileYearData, QUARTILE_ORDER, QUARTILE_COLORS, { flatLabels: true });
 
     // chart: top categories split by quartile (stacked bar) — each category
     // uses its own quartile from the breakdown, not the paper's overall best

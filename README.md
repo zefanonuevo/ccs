@@ -123,3 +123,53 @@ Update `SHEET_ID` and `GID` near the top of the `<script>` block in
 `index.html` (visible in the sheet's URL, or in a fetch error if the CSV
 export fails). `SHEET_ID` identifies the spreadsheet; `GID` identifies
 which tab within it.
+
+## Look and feel
+
+The page uses the CCS Commons portal (ccs.dlsu.edu.ph) design tokens: Ink
+`#111a15`, Forest `#0b5d45`, Mint `#dcebe2`, Paper `#f4f7f3`, Amber `#8a5a00`,
+the portal's dark-mode palette, the 56px sticky blurred nav, pill-shaped
+controls, and the same system font stack. All of it lives in the
+`<style id="portal-theme">` block, which is layered over the base styles, so
+chart and table logic is unchanged. If the portal's tokens change, update the
+variables at the top of that block.
+
+## Compare periods and table sorting
+
+- **Compare periods** sets two publication years side by side (Period A vs
+  Period B) with the change between them. It respects the search box and the
+  Classification, Type, Department and Quartile filters; the Publication Year
+  filter is ignored there because the two selectors replace it. It defaults to
+  the two most recent complete years. The current year is flagged as in progress.
+- **Table sorting**: click any column header (or press Enter or Space on it) to
+  sort ascending, click again for descending. Quartile sorts Q1 to Q4, with
+  unranked records last. The default order is the sheet's row order.
+
+## KPI definitions
+
+All KPIs respond to the active filters. "Records" means rows in the sheet tab.
+
+| KPI | Formula |
+| --- | --- |
+| Total publications | Count of records after filters |
+| Scopus indexed ratio | Records whose Classification contains "Scopus" / total records |
+| Top quartile (Q1) | Records whose best SJR quartile is Q1 / total records. The sub-label also shows Q1 as a share of records that have a quartile at all |
+| Research faculty | Distinct names across the Faculty column (one name per line, or split on `;`, `&`, `and`) |
+| Best quartile of a record | The lowest-numbered quartile across its subject-area breakdown, ignoring Unranked |
+| Compare periods | The same measures computed separately for each selected year, with change as B minus A (percentage points for shares) |
+
+Because 413 of the 752 records have no quartile (the sheet has no SJR data for
+them), Q1 as a share of all records understates journal quality; the ranked-only
+share is shown beside it for that reason.
+
+See `DATA_QUALITY.md` for the data checks run against the live sheet.
+
+## Version history
+
+The current version shows in the page footer and is set by `APP_VERSION` near
+the top of the `<script>` block in `index.html`. Bump it with each release.
+
+- **1.1.0**: CCS Commons portal styling, Compare periods, sortable table,
+  ranked-only Q1 share on the Q1 card, mobile chart overflow fix, KPI
+  definitions and data-quality report.
+- **1.0.0**: Original dashboard (live Google Sheet, filters, charts, detail modal).

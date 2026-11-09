@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>DLSU CCS Faculty Publications</title>
+<meta name="theme-color" content="#0b5d45" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%230b5d45' d='M12 1l2.3 8.7L23 12l-8.7 2.3L12 23l-2.3-8.7L1 12l8.7-2.3z'/%3E%3C/svg%3E" />
+<title>Faculty Publications | CCS Commons</title>
 <style>
   :root {
     --surface-1: #fcfcfb;
@@ -436,23 +438,161 @@
     .stat-grid { grid-template-columns: 1fr; }
   }
 </style>
+<style id="portal-theme">
+  /* CCS Commons (ccs.dlsu.edu.ph) design tokens: Ink, Forest, Mint, Paper, Amber.
+     Layered over the dashboard's base styles so chart and table logic is unchanged. */
+  :root {
+    --ink: #111a15; --forest: #0b5d45; --forest-deep: #094a37; --mint: #dcebe2; --paper: #f4f7f3; --amber: #8a5a00;
+    --surface-1: #ffffff; --surface-2: #e9f1ec; --page: #f4f7f3;
+    --text-primary: #111a15; --text-secondary: #4d5d55; --text-muted: #5f6f66;
+    --gridline: #e3ebe5; --baseline: #cfdbd3; --border: #cfdbd3;
+    --brand: #0b5d45; --accent: #0b5d45; --accent-ink: #ffffff; --accent-soft: #dcebe2;
+    --nav-bg: rgba(244,247,243,0.82);
+    --series-1: #0b5d45; --series-2: #2a78d6; --series-4: #1baf7a;
+    --r-sm: 10px; --r-md: 16px; --r-lg: 24px;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --f-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --surface-1: #121d17; --surface-2: #17261e; --page: #0b130f;
+      --text-primary: #f4f7f3; --text-secondary: #9fb3a8; --text-muted: #86998e;
+      --gridline: #1d2c23; --baseline: #243529; --border: #243529;
+      --brand: #5fcfa5; --accent: #5fcfa5; --accent-ink: #06251a; --accent-soft: #183b2e;
+      --nav-bg: rgba(11,19,15,0.82); --series-1: #5fcfa5;
+    }
+  }
+  :root[data-theme="dark"] {
+    --surface-1: #121d17; --surface-2: #17261e; --page: #0b130f;
+    --text-primary: #f4f7f3; --text-secondary: #9fb3a8; --text-muted: #86998e;
+    --gridline: #1d2c23; --baseline: #243529; --border: #243529;
+    --brand: #5fcfa5; --accent: #5fcfa5; --accent-ink: #06251a; --accent-soft: #183b2e;
+    --nav-bg: rgba(11,19,15,0.82); --series-1: #5fcfa5;
+  }
+  :root[data-theme="light"] {
+    --surface-1: #ffffff; --surface-2: #e9f1ec; --page: #f4f7f3;
+    --text-primary: #111a15; --text-secondary: #4d5d55; --text-muted: #5f6f66;
+    --gridline: #e3ebe5; --baseline: #cfdbd3; --border: #cfdbd3;
+    --brand: #0b5d45; --accent: #0b5d45; --accent-ink: #ffffff; --accent-soft: #dcebe2;
+    --nav-bg: rgba(244,247,243,0.82); --series-1: #0b5d45;
+  }
+
+  html, body { font-family: var(--f-display); -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { letter-spacing: -0.02em; text-wrap: balance; }
+
+  /* Sticky blurred nav, 56px, same as the portal */
+  .nav {
+    position: sticky; top: 0; z-index: 40; height: 56px;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 0 1.5rem; background: var(--nav-bg);
+    -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-brand {
+    display: inline-flex; align-items: center; gap: 10px; color: var(--text-primary);
+    text-decoration: none; font: 700 19px/1 var(--f-display); letter-spacing: -0.02em; white-space: nowrap;
+  }
+  .nav-brand .mark { width: 26px; height: 26px; color: var(--accent); }
+  .nav-actions { display: flex; align-items: center; gap: 0.6rem; }
+  .nav-link {
+    display: inline-flex; align-items: center; min-height: 36px; padding: 0 16px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface-1); color: var(--text-secondary);
+    font: 600 14px/1 var(--f-display); text-decoration: none;
+    transition: background 200ms ease, transform 160ms var(--ease-out);
+  }
+  .nav-link:hover { background: var(--accent-soft); color: var(--accent); }
+  .nav-link:active, #theme-toggle:active { transform: scale(0.97); }
+  #theme-toggle { width: 36px; height: 36px; background: var(--surface-1); border-color: var(--border); transition: background 200ms ease, transform 160ms var(--ease-out); }
+  #theme-toggle:hover { background: var(--accent-soft); color: var(--accent); }
+
+  /* Hero, same pattern as the portal: eyebrow, large heading with an accent phrase */
+  .hero { max-width: 1400px; margin: 0 auto; padding: 2.25rem 1.5rem 0.5rem; }
+  .eyebrow { font: 700 12px/1 var(--f-display); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  .hero h1 { font-size: clamp(32px, 5.5vw, 56px); font-weight: 800; line-height: 1.08; margin-top: 14px; max-width: 18ch; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero-sub { font-size: 1rem; color: var(--text-secondary); margin-top: 0.9rem; max-width: 60ch; }
+  .status-line { margin-top: 0.8rem; }
+  .status-line.ok { color: var(--text-muted); }
+
+  main { padding-top: 1rem; }
+
+  /* Surfaces: portal radii and borders */
+  .stat-card, .filter-bar, .chart-card, .table-card { background: var(--surface-1); border-color: var(--border); border-radius: var(--r-lg); }
+  .stat-card { padding: 1.15rem 1.3rem; }
+  .stat-label { color: var(--text-muted); letter-spacing: 0.06em; }
+  .stat-value { font-weight: 800; letter-spacing: -0.02em; }
+  .chart-card { padding: 1.15rem 1.3rem 0.9rem; }
+  .filter-bar { padding: 1rem 1.2rem; }
+  .filter-field input, .msdd-trigger { border-radius: 999px; padding: 0.6rem 0.95rem; background: var(--page); border-color: var(--border); }
+  .filter-field input:focus-visible, .msdd-trigger:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .msdd-panel { border-radius: var(--r-md); background: var(--surface-1); }
+  .msdd-option { border-radius: var(--r-sm); }
+  .msdd-option:hover { background: var(--accent-soft); }
+  .msdd-option input[type="checkbox"] { accent-color: var(--accent); }
+  .chart-tag, .pill { background: var(--accent-soft); color: var(--accent); border-color: transparent; font-weight: 600; }
+  thead th { background: var(--surface-2); }
+  tbody tr.clickable-row:hover { background: var(--accent-soft); }
+  .modal-card { border-radius: var(--r-lg); background: var(--surface-1); }
+  .modal-close { border-radius: 999px; }
+  .modal-breakdown-table .percentile-link { color: var(--accent); }
+  .tooltip { background: var(--ink); color: var(--paper); border-radius: var(--r-sm); }
+
+  .site-foot { max-width: 1400px; margin: 0 auto; padding: 1rem 1.5rem 2rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; font-size: 0.78rem; color: var(--text-muted); border-top: 1px solid var(--border); }
+  #app-version { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+  /* Compare periods + sortable headers */
+  .compare-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 1.15rem 1.3rem; margin-bottom: 1.1rem; }
+  .compare-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin: 0.4rem 0 0.9rem; }
+  .compare-controls label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+  .compare-controls select { font: inherit; font-size: 0.85rem; color: var(--text-primary); background: var(--page); border: 1px solid var(--border); border-radius: 999px; padding: 0.45rem 0.9rem; }
+  .compare-vs { color: var(--text-muted); font-size: 0.8rem; }
+  .compare-table-wrap { overflow-x: auto; }
+  .compare-table th, .compare-table td { padding: 0.55rem 0.9rem; text-align: left; border-bottom: 1px solid var(--gridline); font-size: 0.85rem; white-space: nowrap; }
+  .compare-table thead th { background: var(--surface-2); position: static; }
+  .compare-table td:first-child { color: var(--text-primary); font-weight: 600; }
+  .compare-table tbody tr:last-child td { border-bottom: none; }
+  .delta-up { color: var(--good); font-weight: 700; }
+  .delta-down { color: var(--critical); font-weight: 700; }
+  .delta-flat { color: var(--text-muted); }
+  .compare-note { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.7rem; }
+  thead th.sortable { cursor: pointer; user-select: none; }
+  thead th.sortable:hover { color: var(--accent); }
+  thead th .sort-ind { display: inline-block; width: 0.9em; margin-left: 0.25em; color: var(--accent); }
+
+  /* Grid items default to min-width:auto, so a fixed-width chart SVG stretched the
+     single mobile column past the viewport. Letting the track shrink fixes the overflow. */
+  .charts-grid > *, .chart-card, .chart-body { min-width: 0; }
+
+  @media (max-width: 720px) {
+    .charts-grid { grid-template-columns: minmax(0, 1fr); }
+    .nav { padding: 0 1rem; }
+    .nav-link { display: none; }
+    .hero { padding: 1.5rem 1rem 0.25rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9s1.3-6.4 3.8-9z"/></svg>
-      </div>
-      <div>
-        <h1>DLSU CCS Faculty Publications</h1>
-        <p>Consolidated Research Analytics &amp; SJR Quartiles Dashboard</p>
-        <div id="status-line" class="status-line ok">Loading live sheet…</div>
-      </div>
+  <header class="nav">
+    <a class="nav-brand" href="https://ccs.dlsu.edu.ph" aria-label="CCS Commons home">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1l2.3 8.7L23 12l-8.7 2.3L12 23l-2.3-8.7L1 12l8.7-2.3z"/></svg>
+      <span>CCS Commons</span>
+    </a>
+    <div class="nav-actions">
+      <a class="nav-link" href="https://ccs.dlsu.edu.ph">Back to portal</a>
+      <button id="theme-toggle" type="button" title="Toggle theme" aria-label="Toggle theme">
+        <svg id="theme-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+      </button>
     </div>
-    <button id="theme-toggle" type="button" title="Toggle theme" aria-label="Toggle theme">
-      <svg id="theme-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
-    </button>
   </header>
+
+  <section class="hero">
+    <div class="eyebrow">College of Computer Studies</div>
+    <h1>Faculty <em>publications.</em></h1>
+    <p class="hero-sub">Consolidated research analytics and SJR quartiles for DLSU CCS faculty.</p>
+    <div id="status-line" class="status-line ok">Loading live sheet…</div>
+  </section>
 
   <main>
     <div id="banner" class="banner">
@@ -602,6 +742,25 @@
       </div>
     </div>
 
+    <section class="compare-card" id="compare-card" aria-labelledby="compare-title">
+      <div class="chart-head">
+        <h3 id="compare-title">Compare periods</h3>
+        <span class="chart-tag">Respects the other filters</span>
+      </div>
+      <div class="compare-controls">
+        <label>Period A <select id="cmp-a"></select></label>
+        <span class="compare-vs">vs</span>
+        <label>Period B <select id="cmp-b"></select></label>
+      </div>
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <thead><tr><th>Measure</th><th id="cmp-a-head">A</th><th id="cmp-b-head">B</th><th>Change (B vs A)</th></tr></thead>
+          <tbody id="cmp-body"></tbody>
+        </table>
+      </div>
+      <p class="compare-note" id="cmp-note"></p>
+    </section>
+
     <div class="table-card">
       <div class="table-head">
         <h3>Publications</h3>
@@ -615,6 +774,11 @@
       </div>
     </div>
   </main>
+
+  <footer class="site-foot">
+    <span>CCS Commons &middot; Faculty Publications</span>
+    <span id="app-version">v1.1.0</span>
+  </footer>
 
   <div class="tooltip" id="tooltip"></div>
 
@@ -667,6 +831,8 @@
 (function () {
   "use strict";
 
+  var APP_VERSION = "1.1.0";
+  document.getElementById("app-version").textContent = "v" + APP_VERSION;
   var SHEET_ID = "1c4ilWtBXwdQth8IXd6MgZ4odhWubQSc69AmYohgYrbs";
   var GID = "1125842073";
   var CSV_URL = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&gid=" + GID;
@@ -1468,6 +1634,8 @@
     return matchedFaculty.length ? { faculty: matchedFaculty, department: matchedDept } : { faculty: facs, department: depts };
   }
 
+  var tableSort = { key: null, dir: 1 };
+  var lastFiltered = [];
   function renderTable(records, missing) {
     var head = document.getElementById("table-head-row");
     var body = document.getElementById("table-body");
@@ -1475,10 +1643,37 @@
     var tr = document.createElement("tr");
     TABLE_FIELDS.forEach(function (f) {
       var th = document.createElement("th");
-      th.textContent = FIELD_LABELS[f] + (missing.indexOf(FIELD_LABELS[f]) !== -1 ? " ⚠" : "");
+      th.className = "sortable";
+      th.tabIndex = 0;
+      th.setAttribute("role", "columnheader");
+      th.setAttribute("aria-sort", tableSort.key === f ? (tableSort.dir === 1 ? "ascending" : "descending") : "none");
+      th.appendChild(document.createTextNode(FIELD_LABELS[f] + (missing.indexOf(FIELD_LABELS[f]) !== -1 ? " ⚠" : "")));
+      var ind = document.createElement("span");
+      ind.className = "sort-ind";
+      ind.textContent = tableSort.key === f ? (tableSort.dir === 1 ? "▲" : "▼") : "";
+      th.appendChild(ind);
+      function toggleSort() {
+        if (tableSort.key === f) { tableSort.dir = -tableSort.dir; } else { tableSort.key = f; tableSort.dir = 1; }
+        renderTable(lastFiltered, currentMissing);
+      }
+      th.addEventListener("click", toggleSort);
+      th.addEventListener("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggleSort(); } });
       tr.appendChild(th);
     });
     head.appendChild(tr);
+
+    if (tableSort.key) {
+      var key = tableSort.key, dir = tableSort.dir;
+      var val = function (r) {
+        if (key === "quartile") { var b = bestQuartile(r); return b === "Unranked" || !b ? 9 : Number(b.slice(1)); }
+        if (key === "year") return Number(r.year) || 0;
+        return String(r[key] || "").toLowerCase();
+      };
+      records = records.slice().sort(function (a, b) {
+        var x = val(a), y = val(b);
+        return (x < y ? -1 : x > y ? 1 : 0) * dir;
+      });
+    }
 
     body.innerHTML = "";
     var frag = document.createDocumentFragment();
@@ -1585,6 +1780,10 @@
 
     var q1Count = filtered.filter(function (r) { return bestQuartile(r) === "Q1"; }).length;
     document.getElementById("stat-q1").textContent = total ? (Math.round((q1Count / total) * 1000) / 10) + "%" : "–";
+    var rankedCount = filtered.filter(function (r) { var b = bestQuartile(r); return b && b !== "Unranked"; }).length;
+    document.getElementById("stat-q1-sub").textContent = total
+      ? (q1Count + " of " + total + " records" + (rankedCount ? " · " + (Math.round((q1Count / rankedCount) * 1000) / 10) + "% of " + rankedCount + " ranked" : ""))
+      : "No data";
 
     var facultySet = {};
     filtered.forEach(function (r) { splitFaculty(r.faculty).forEach(function (name) { facultySet[name] = true; }); });
@@ -1642,7 +1841,9 @@
     }).sort(function (a, b) { return b.total - a.total; }).slice(0, 8);
     renderStackedBarChart(document.getElementById("chart-category-quartile"), document.getElementById("category-quartile-legend"), categoryData, QUARTILE_ORDER, QUARTILE_COLORS);
 
+    lastFiltered = filtered;
     renderTable(filtered, currentMissing);
+    renderCompare();
   }
 
   var currentMissing = [];
@@ -1660,6 +1861,70 @@
 
   document.getElementById("f-search").addEventListener("input", render);
   window.addEventListener("resize", debounce(render, 150));
+
+  // ---------- compare periods ----------
+  var cmpInit = false;
+  function pct(n, d) { return d ? Math.round((n / d) * 1000) / 10 : null; }
+  function periodStats(records) {
+    var total = records.length;
+    var scopus = records.filter(function (r) { return /scopus/i.test(r.classification); }).length;
+    var q1 = records.filter(function (r) { return bestQuartile(r) === "Q1"; }).length;
+    var ranked = records.filter(function (r) { var b = bestQuartile(r); return b && b !== "Unranked"; }).length;
+    var fac = {};
+    records.forEach(function (r) { splitFaculty(r.faculty).forEach(function (n) { fac[n] = true; }); });
+    return { total: total, scopusPct: pct(scopus, total), q1: q1, q1RankedPct: pct(q1, ranked), faculty: Object.keys(fac).length };
+  }
+  function fmtVal(v, unit) { return v === null ? "n/a" : (unit === "%" ? v + "%" : String(v)); }
+  function deltaCell(a, b, unit) {
+    if (a === null || b === null) return '<span class="delta-flat">n/a</span>';
+    var d = Math.round((b - a) * 10) / 10;
+    if (d === 0) return '<span class="delta-flat">no change</span>';
+    var rel = unit === "%" ? " pts" : (a ? " (" + (d > 0 ? "+" : "") + Math.round((d / a) * 1000) / 10 + "%)" : "");
+    return '<span class="' + (d > 0 ? "delta-up" : "delta-down") + '">' + (d > 0 ? "+" : "") + d + rel + "</span>";
+  }
+  function renderCompare() {
+    var selA = document.getElementById("cmp-a"), selB = document.getElementById("cmp-b");
+    if (!ALL_RECORDS.length) return;
+    if (!cmpInit) {
+      var years = uniqueSorted(ALL_RECORDS, "year").filter(function (y) { return /^\d{4}$/.test(y); });
+      var opts = years.slice().reverse();
+      [selA, selB].forEach(function (sel) {
+        sel.innerHTML = "";
+        opts.forEach(function (y) { var o = document.createElement("option"); o.value = y; o.textContent = y; sel.appendChild(o); });
+        sel.addEventListener("change", renderCompare);
+      });
+      // default: the two most recent complete years (the current year is still in progress)
+      var thisYear = String(new Date().getFullYear());
+      var past = opts.filter(function (y) { return y < thisYear; });
+      if (past.length < 2) past = opts.filter(function (y) { return y <= thisYear; });
+      selB.value = past[0] || opts[0];
+      selA.value = past[1] || past[0] || opts[0];
+      cmpInit = true;
+    }
+    var f = currentFilters();
+    var base = { search: f.search, year: new Set(), classification: f.classification, type: f.type, department: f.department, quartile: f.quartile };
+    var a = periodStats(applyFilters(ALL_RECORDS, Object.assign({}, base, { year: new Set([selA.value]) })));
+    var b = periodStats(applyFilters(ALL_RECORDS, Object.assign({}, base, { year: new Set([selB.value]) })));
+    document.getElementById("cmp-a-head").textContent = selA.value;
+    document.getElementById("cmp-b-head").textContent = selB.value;
+    var rowsDef = [
+      ["Publications", "total", ""],
+      ["Scopus indexed share", "scopusPct", "%"],
+      ["Q1 publications", "q1", ""],
+      ["Q1 share of ranked records", "q1RankedPct", "%"],
+      ["Faculty with publications", "faculty", ""]
+    ];
+    document.getElementById("cmp-body").innerHTML = rowsDef.map(function (d) {
+      return "<tr><td>" + d[0] + "</td><td class=\"tabular\">" + fmtVal(a[d[1]], d[2]) + "</td><td class=\"tabular\">" + fmtVal(b[d[1]], d[2]) + "</td><td class=\"tabular\">" + deltaCell(a[d[1]], b[d[1]], d[2]) + "</td></tr>";
+    }).join("");
+    var thisY = String(new Date().getFullYear());
+    var notes = [];
+    [selA.value, selB.value].forEach(function (y) {
+      if (y === thisY) notes.push(y + " is a year in progress, so counts are not comparable with a full year.");
+      if (y > thisY) notes.push(y + " is dated in the future in the sheet.");
+    });
+    document.getElementById("cmp-note").textContent = notes.join(" ");
+  }
 
   function debounce(fn, ms) {
     var t; return function () { clearTimeout(t); t = setTimeout(fn, ms); };

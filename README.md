@@ -181,6 +181,11 @@ See `DATA_QUALITY.md` for the data checks run against the live sheet.
 The current version shows in the page footer and is set by `APP_VERSION` near
 the top of the `<script>` block in `index.html`. Bump it with each release.
 
+- **1.3.0**: Chart layout swapped: SJR Quartiles by Year and Categories of the
+  Quartiles now sit in the first chart row beside Publications per Year, and
+  Category Indexation and Publication Type moved to the second row beside
+  Publications per Faculty. Heading changed to "CCS publications." and the
+  eyebrow and subtitle lines removed.
 - **1.2.0**: Inter (headings) and Poppins (subheadings, labels and short copy)
   loaded from Google Fonts; the Highest SJR Quartile pie is now a stacked bar
   chart per publication year.
